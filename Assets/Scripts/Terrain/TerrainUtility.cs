@@ -72,7 +72,7 @@ public static partial class TerrainUtility
             heightMapRes = Terrain.activeTerrain.terrainData.heightmapResolution;
             alphaMapRes = Terrain.activeTerrain.terrainData.alphamapResolution;
             InitBrushs();
-            InitPrototype(false, false, true);
+            InitPrototype(true, true, true);
 
             pieceWidth = terrainSize.x / (heightMapRes - 1);
             pieceHeight = terrainSize.z / (heightMapRes - 1);

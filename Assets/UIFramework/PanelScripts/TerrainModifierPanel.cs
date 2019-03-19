@@ -162,6 +162,7 @@ public class TerrainModifierPanel : BasePanel
 
     public override void OnEnter()
     {
+        transform.localScale = Vector3.one;
         gameObject.SetActive(true);
     }
 

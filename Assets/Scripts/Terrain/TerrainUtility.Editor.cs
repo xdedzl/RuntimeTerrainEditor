@@ -506,7 +506,7 @@ public static partial class TerrainUtility
     /// <returns></returns>
     public static TreePrototype[] CreatTreePrototype()
     {
-        GameObject[] objs = Resources.LoadAll<GameObject>("Terrain/SpeedTree/Trees");
+        GameObject[] objs = Resources.LoadAll<GameObject>("Terrain/SpeedTree");
         TreePrototype[] trees = new TreePrototype[objs.Length];
         for (int i = 0, length = objs.Length; i < length; i++)
         {
@@ -525,7 +525,8 @@ public static partial class TerrainUtility
         Terrain[] terrains = Terrain.activeTerrains;
         for (int i = 0, length = terrains.Length; i < length; i++)
         {
-            terrains[i].terrainData.treePrototypes = terrains[i].terrainData.treePrototypes.Concat(trees).ToArray();
+            //terrains[i].terrainData.treePrototypes = terrains[i].terrainData.treePrototypes.Concat(trees).ToArray();
+            terrains[i].terrainData.treePrototypes = trees;
         }
     }
 
@@ -656,7 +657,8 @@ public static partial class TerrainUtility
         Terrain[] terrains = Terrain.activeTerrains;
         for (int i = 0, length = terrains.Length; i < length; i++)
         {
-            terrains[i].terrainData.detailPrototypes = terrains[i].terrainData.detailPrototypes.Concat(details).ToArray();
+            //terrains[i].terrainData.detailPrototypes = terrains[i].terrainData.detailPrototypes.Concat(details).ToArray();
+            terrains[i].terrainData.detailPrototypes = details;
             terrains[i].detailObjectDistance = 250;  // 设置草的消失距离
         }
     }
