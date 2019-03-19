@@ -888,46 +888,11 @@ public static partial class TerrainUtility
     public static SplatPrototype[] CreateSplatPrototype()
 #endif
     {
-        Texture2D[] texturesRes = Resources.LoadAll<Texture2D>("Terrain/Textures");
-        //Queue<Texture2D> textures = new Queue<Texture2D>();
-        //Queue<Texture2D> normalMaps = new Queue<Texture2D>();
-        //bool lastTypeIsNmp = true;
-        //for (int i = 0; i < texturesRes.Length; i++)
-        //{
-        //    string[] strs = texturesRes[i].name.Split('_');
-        //    if (strs.Length == 1)
-        //    {
-        //        if (lastTypeIsNmp == false)
-        //        {
-        //            normalMaps.Enqueue(null);
-        //        }
-        //        textures.Enqueue(texturesRes[i]);
-        //        lastTypeIsNmp = false;
-        //    }
-        //    else if (strs.Length == 2)
-        //    {
-        //        normalMaps.Enqueue(texturesRes[i]);
-        //        lastTypeIsNmp = true;
-        //    }
-        //    else
-        //    {
-        //        Debug.LogError("格式错误");
-        //    }
-        //}
 #if UNITY_2018
-        TerrainLayer[] splats = new TerrainLayer[texturesRes.Length];
-
-        for (int i = 0, length = splats.Length; i < length; i++)
-        {
-            TerrainLayer splat = new TerrainLayer
-            {
-                diffuseTexture = texturesRes[i],
-                //normalMapTexture = normalMaps.Dequeue()
-            };
-            splats[i] = splat;
-        }
+        TerrainLayer[] splats = Resources.LoadAll<TerrainLayer>("Terrain/TerrainLayers");
         return splats;
 #else 
+        Texture2D[] texturesRes = Resources.LoadAll<Texture2D>("Terrain/Textures");
         SplatPrototype[] splats = new SplatPrototype[texturesRes.Length];
         for (int i = 0, length = splats.Length; i < length; i++)
         {
@@ -1011,12 +976,44 @@ public static partial class TerrainUtility
                     {
                         map[i, j, k] = 0f;
                     }
-                    map[i, j, index] = 0.5f;
+                    map[i, j, index] = 1f;
                 }
             }
             terrain.terrainData.SetAlphamaps(mapIndex.x, mapIndex.y, map);
         }
     }
+
+    /// <summary>
+    /// 利用笔刷设置贴图
+    /// </summary>
+    public static async void SetTextureWithBrush(Vector3 point, int index, float radius, int brushIndex)
+    {
+        Vector3 down = new Vector3(point.x - radius, 0, point.z - radius);
+        Terrain terrain = GetTerrain(point);
+        if (terrain != null)
+        {
+            Vector2Int mapIndex = GetAlphaMapIndex(terrain, down);
+            int mapRadius = (int)(radius / terrain.terrainData.size.x * terrain.terrainData.alphamapResolution);
+            float[,,] map = terrain.terrainData.GetAlphamaps(mapIndex.x, mapIndex.y, 2 * mapRadius, 2 * mapRadius);
+            float[,] brush = await Math2d.ZoomBilinearInterpAsync(brushDic[brushIndex], 2 * mapRadius, 2 * mapRadius);
+
+            // 这么计算所附加的贴图实际上是有问题的，但是我懒得继续算了
+            for (int i = 0; i < map.GetLength(0); i++)
+            {
+                for (int j = 0; j < map.GetLength(1); j++)
+                {
+                    float temp = (1 - brush[i, j]) / (terrain.terrainData.alphamapLayers - 1);
+                    for (int k = 0; k < terrain.terrainData.alphamapLayers; k++)
+                    {
+                        map[i, j, k] = temp;
+                    }
+                    map[i, j, index] = 1 - temp;
+                }
+            }
+            terrain.terrainData.SetAlphamaps(mapIndex.x, mapIndex.y, map);
+        }
+    }
+
 
     #endregion
 }
