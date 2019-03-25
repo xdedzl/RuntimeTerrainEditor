@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.UI;
+using UnityEngine.Experimental.TerrainAPI;
 
 public class TerrainTest : MonoBehaviour
 {
@@ -17,5 +18,11 @@ public class TerrainTest : MonoBehaviour
         UIManager.Instance.PushPanel(UIPanelType.TerrainModifier); 
         MouseEvent.Instance.ChangeState(MouseStateType.TerrainModifier); 
         TerrainUtility.ConfigActiveTerrains(); 
+
+    }
+
+    private void Terrain()
+    {
+        //TerrainPaintUtility
     }
 }
