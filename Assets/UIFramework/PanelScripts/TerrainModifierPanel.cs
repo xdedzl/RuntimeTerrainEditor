@@ -95,7 +95,7 @@ public class TerrainModifierPanel : BasePanel
             AutoSetToogle(sprits, toogleImage);
 
             // 通过类型修改投影的显示
-            MouseEvent.Instance.GetState<MouseTerrainModifierState>(MouseStateType.TerrainModifier).OnDropDownChange(a);
+            TerrainModule.Instance.mouseTerrainModifierState.OnDropDownChange(a);
         });
     }
 
@@ -171,7 +171,7 @@ public class TerrainModifierPanel : BasePanel
         gameObject.SetActive(false);
 
         // 这个是临时的
-        MouseEvent.Instance.GetState<MouseTerrainModifierState>(MouseStateType.TerrainModifier).SetProjectorShow(false);
+        TerrainModule.Instance.mouseTerrainModifierState.SetProjectorShow(false);
     }
 
     public enum ModifierType
@@ -274,7 +274,7 @@ public class MouseTerrainModifierState : MouseState
     /// </summary>
     /// <param name="para"></param>
     /// <param name="args"></param>
-    public override void OnActive(object para = null, params object[] args)
+    public override void OnEnable()
     {
         if ((int)panel.modifierType < 5)
         {
@@ -328,6 +328,7 @@ public class MouseTerrainModifierState : MouseState
     /// </summary>
     public override void OnLeftButtonDown()
     {
+        Debug.Log("LeftBtnDown");
     }
 
     /// <summary>
@@ -384,7 +385,7 @@ public class MouseTerrainModifierState : MouseState
     /// <summary>
     /// 状态结束
     /// </summary>
-    public override void OnDisactive()
+    public override void OnDisable()
     {
         Projection.enabled = false;
     }

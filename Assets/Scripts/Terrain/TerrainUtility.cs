@@ -57,7 +57,7 @@ public static partial class TerrainUtility
     /// </summary>
     static TerrainUtility()
     {
-        ConfigTerrainData();
+        InitBrushs();
     }
 
     /// <summary>
@@ -71,7 +71,7 @@ public static partial class TerrainUtility
             terrainSize = Terrain.activeTerrain.terrainData.size;
             heightMapRes = Terrain.activeTerrain.terrainData.heightmapResolution;
             alphaMapRes = Terrain.activeTerrain.terrainData.alphamapResolution;
-            InitBrushs();
+
             InitPrototype(true, true, true);
 
             pieceWidth = terrainSize.x / (heightMapRes - 1);

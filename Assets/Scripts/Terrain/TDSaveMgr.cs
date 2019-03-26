@@ -89,6 +89,8 @@ public class TDSaveMgr : Singleton<TDSaveMgr>
             MonoEvent.Instance.UPDATE -= Update;
             terrainCountToCreate = -1;
         }
+        if (GetProgress() > 0.99)
+            IsDown = true;
     }
 
     #region 自定义格式存储数据
@@ -113,6 +115,12 @@ public class TDSaveMgr : Singleton<TDSaveMgr>
     /// <param name="folder"></param>
     public void ReadTerrainInfo(string folder)
     {
+        RunAfterCreateTerrain += () =>
+        {
+            TerrainUtility.ConfigActiveTerrains();
+            TerrainUtility.ConfigTerrainData();
+            RunAfterCreateTerrain = null;
+        };
         ReadTerrainData(folder);
     }
 
@@ -441,7 +449,6 @@ public class TDSaveMgr : Singleton<TDSaveMgr>
 
     public float GetProgress()
     {
-        //Debug.Log(runedCount + ":" + taskCount);
         return runedCount / taskCount;
     }
     public bool IsDown { get; set; }

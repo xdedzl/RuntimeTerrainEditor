@@ -8,7 +8,8 @@ public class AutoCreateTest : MonoBehaviour
     void Start()
     {
         UIManager.Instance.PushPanel(UIPanelType.TerrainModifier);
-        MouseEvent.Instance.ChangeState(MouseStateType.TerrainModifier);
+        Debug.Log(TerrainModule.Instance.mouseTerrainModifierState);
+        MouseEvent.Instance.ChangeState(TerrainModule.Instance.mouseTerrainModifierState);
         //TerrainUtility.ConfigActiveTerrains();
     }
 
@@ -18,6 +19,12 @@ public class AutoCreateTest : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.J))
         {
             TDSaveMgr.Instance.ReadTerrainInfo("2019-03-25 14-33-15");
+        }
+
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            TerrainUtility.ConfigActiveTerrains();
+            TerrainUtility.ConfigTerrainData();
         }
     }
 }
