@@ -13,17 +13,20 @@ using UnityEngine.Experimental.TerrainAPI;
 
 public class TerrainTest : MonoBehaviour
 {
+    public AnimationCurve anim;
+
     void Start()
     {
         UIManager.Instance.PushPanel(UIPanelType.TerrainModifier);
         
         MouseEvent.Instance.ChangeState(TerrainModule.Instance.mouseTerrainModifierState); 
-        TerrainUtility.ConfigActiveTerrains(); 
+        TerrainUtility.ConfigActiveTerrains();
+
+        Debug.Log(anim.Evaluate(10));
 
     }
 
     private void Terrain()
     {
-        //TerrainPaintUtility
     }
 }

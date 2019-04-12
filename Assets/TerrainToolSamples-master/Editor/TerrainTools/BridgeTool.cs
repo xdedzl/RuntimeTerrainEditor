@@ -87,6 +87,7 @@ namespace UnityEditor.Experimental.TerrainAPI
         public override bool OnPaint(Terrain terrain, IOnPaint editContext)
         {
             Vector2 uv = editContext.uv;
+            Debug.Log(uv);
 
             //grab the starting position & height
             if (Event.current.shift)
@@ -113,6 +114,7 @@ namespace UnityEditor.Experimental.TerrainAPI
                 targetPos.y = targetUVs.y;
             }
 
+            // 计算区间为[0,1]
             Vector3 stroke = targetPos - m_StartPoint;
             float strokeLength = stroke.magnitude;
             int numSplats = (int)(strokeLength / (0.001f * m_Spacing));
@@ -185,7 +187,7 @@ namespace UnityEditor.Experimental.TerrainAPI
 
                 TerrainPaintUtility.EndPaintHeightmap(paintContext, "Terrain Paint - Bridge");
             }
-            return false;
+            return true;
         }
     }
 }
