@@ -4,29 +4,36 @@
 // 时间： 2018-12-04 08:45:05
 // 版本： V 1.0
 // ==========================================
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using System;
-using UnityEngine.UI;
-using UnityEngine.Experimental.TerrainAPI;
+using XFramework;
 
-public class TerrainTest : MonoBehaviour
+public class TerrainTest : ProcedureBase
 {
-    public AnimationCurve anim;
-
-    void Start()
+    public override void Init()
     {
-        UIManager.Instance.PushPanel(UIPanelType.TerrainModifier);
-        
-        MouseEvent.Instance.ChangeState(TerrainModule.Instance.mouseTerrainModifierState); 
-        TerrainUtility.ConfigActiveTerrains();
+        Game.UIModule.Open(UIName.TerrainModifier);
 
-        Debug.Log(anim.Evaluate(10));
+        Game.FsmModule.GetFsm<MouseFsm>().StartFsm<MouseTerrainModifierState>();
+        Game.TerrainModule.ConfigActiveTerrains();
 
+        float[,,] a = Terrain.activeTerrain.terrainData.GetAlphamaps(0, 500, 10, 10);
+        for (int i = 0; i < 10; i++)
+        {
+            for (int j = 0; j < 10; j++)
+            {
+                a[i, j, 1] = 1;
+            }
+        }
+        a[0, 0, 1] = 1;
+        Terrain.activeTerrain.terrainData.SetAlphamaps(0, 500, a);
     }
 
-    private void Terrain()
+    public override void OnUpdate()
     {
+        if (Input.GetMouseButtonDown(0))
+        {
+            RaycastHit hit = Utility.SendRay(LayerMask.GetMask("Terrain"));
+            Game.TerrainModule.SetTexture(hit.point, 10, 1);
+        }
     }
 }

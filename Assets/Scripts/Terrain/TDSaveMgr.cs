@@ -4,6 +4,8 @@ using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
 using System.Linq;
+using XFramework;
+using XFramework.TerrainMoudule;
 
 public class TDSaveMgr : Singleton<TDSaveMgr>
 {
@@ -117,8 +119,8 @@ public class TDSaveMgr : Singleton<TDSaveMgr>
     {
         RunAfterCreateTerrain += () =>
         {
-            TerrainUtility.ConfigActiveTerrains();
-            TerrainUtility.ConfigTerrainData();
+            Game.TerrainModule.ConfigActiveTerrains();
+            Game.TerrainModule.ConfigTerrainData();
             RunAfterCreateTerrain = null;
         };
         ReadTerrainData(folder);
@@ -213,7 +215,7 @@ public class TDSaveMgr : Singleton<TDSaveMgr>
             data = TDDataSerialize(tDData);
          
             runedCount += 0.4f;
-            data = IOUtility.Compress(data);
+            data = Utility.IO.Compress(data);
             File.WriteAllBytes(savePath + "/" + folderName + "/" + fileName + ".terrainData", data);
             runedCount += 0.2f;
     });
@@ -266,7 +268,7 @@ public class TDSaveMgr : Singleton<TDSaveMgr>
     private void ReadTDData(string fileName)
     {
         byte[] data = File.ReadAllBytes(fileName);
-        data = IOUtility.Decompress(data);
+        data = Utility.IO.Decompress(data);
         runedCount += 0.2f;
         TDData tDData = TDDataDeserialize(data);
         lock (tDDatas)
@@ -352,9 +354,9 @@ public class TDSaveMgr : Singleton<TDSaveMgr>
     /// </summary>
     private void InitPrototype()
     {
-        details = TerrainUtility.CreateDetailPrototype();
-        trees = TerrainUtility.CreatTreePrototype();
-        splats = TerrainUtility.CreateSplatPrototype();
+        details = Game.TerrainModule.CreateDetailPrototype(Game.ResModule.LoadAll<Texture2D>("Assets/ABRes/Terrain/Details"));
+        trees = Game.TerrainModule.CreatTreePrototype(Game.ResModule.LoadAll<GameObject>("Assets/ABRes/Terrain/Trees"));
+        splats = Game.ResModule.LoadAll<TerrainLayer>("Assets/ABRes/Terrain/TerrainLayers");
     }
 
     #endregion

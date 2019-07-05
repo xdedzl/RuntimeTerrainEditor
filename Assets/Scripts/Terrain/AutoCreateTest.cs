@@ -1,20 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using XFramework;
 
-public class AutoCreateTest : MonoBehaviour
+public class AutoCreateTest : ProcedureBase
 {
     // Start is called before the first frame update
-    void Start()
+    public override void Init()
     {
-        UIManager.Instance.PushPanel(UIPanelType.TerrainModifier);
-        Debug.Log(TerrainModule.Instance.mouseTerrainModifierState);
-        MouseEvent.Instance.ChangeState(TerrainModule.Instance.mouseTerrainModifierState);
-        //TerrainUtility.ConfigActiveTerrains();
+        Game.UIModule.Open(UIName.TerrainModifier);
+        Game.FsmModule.GetFsm<MouseFsm>().StartFsm<MouseTerrainModifierState>();
     }
 
     // Update is called once per frame
-    void Update()
+    public override void OnUpdate()
     {
         if (Input.GetKeyDown(KeyCode.J))
         {
@@ -23,8 +22,8 @@ public class AutoCreateTest : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.K))
         {
-            TerrainUtility.ConfigActiveTerrains();
-            TerrainUtility.ConfigTerrainData();
+            Game.TerrainModule.ConfigActiveTerrains();
+            Game.TerrainModule.ConfigTerrainData();
         }
     }
 }

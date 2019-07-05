@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>XFrameworkEditor</name>
+    </assembly>
+    <members>
+        <member name="T:AssetBundleEditor">
+            <summary>
+            打包 AssetBundle
+            </summary>
+        </member>
+        <member name="M:AssetBundleEditor.MarkDirectory(System.IO.DirectoryInfo,AssetBundleEditor.PackOption)">
+            <summary>
+            标记文件
+            </summary>
+            <param name="path"></param>
+            <param name="packOption"></param>
+        </member>
+        <member name="M:AssetBundleEditor.StartPack">
+            <summary>
+            开始打包
+            </summary>
+        </member>
+        <member name="M:AssetOpenModeWindow.OpenAssetWithEnd(AssetOpenModeWindow.CodeOpneMode,System.String)">
+            <summary>
+            打开文件
+            </summary>
+        </member>
+        <member name="M:AssetOpenModeWindow.GetFileFullname(AssetOpenModeWindow.CodeOpneMode)">
+            <summary>
+            通过打开方式获取exe完整路径
+            </summary>
+        </member>
+        <member name="M:AssetOpenModeWindow.Save">
+            <summary>
+            保存编辑器变量
+            </summary>
+        </member>
+        <member name="M:AssetOpenModeWindow.Load">
+            <summary>
+            加载编辑器变量
+            </summary>
+        </member>
+        <member name="M:XFramework.Editor.GenerateCodeWindow.DrawSelectUI">
+            <summary>
+            绘制 选择要分析的UI
+            </summary>
+        </member>
+        <member name="M:XFramework.Editor.GenerateCodeWindow.DrawFindWidget">
+            <summary>
+            绘制 查找UI控件
+            </summary>
+        </member>
+        <member name="M:XFramework.Editor.GenerateCodeWindow.DrawBaseGUIList">
+            <summary>
+            绘制 控件列表
+            </summary>
+        </member>
+        <member name="M:XFramework.Editor.GenerateCodeWindow.DrawUIList">
+            <summary>
+            绘制UI控件列表
+            </summary>
+        </member>
+        <member name="M:XFramework.Editor.GenerateCodeWindow.RefreshUIList">
+            <summary>
+            更新UI控件列表
+            </summary>
+        </member>
+        <member name="M:XFramework.Editor.GenerateCodeWindow.InitCodeText">
+            <summary>
+            初始化代码文本
+            </summary>
+        </member>
+        <member name="M:XFramework.Editor.GenerateCodeWindow.InitGUICache">
+            <summary>
+            写入GUI缓存
+            </summary>
+        </member>
+        <member name="M:XFramework.Editor.GenerateCodeWindow.InitRegText">
+            <summary>
+            写入Reg函数
+            </summary>
+        </member>
+        <member name="M:XFramework.Editor.GenerateCodeWindow.InitAddEvent">
+            <summary>
+            写入UI组件的事件注册
+            </summary>
+        </member>
+        <member name="M:XFramework.Editor.GenerateCodeWindow.InitEventFun">
+            <summary>
+            写入被注册的方法
+            </summary>
+        </member>
+        <member name="T:CreateComponent">
+            <summary>
+            用于创建一些自定义UI组件
+            </summary>
+        </member>
+        <member name="T:AutoSetImpotor">
+            <summary>
+            导入资源自动设置
+            相关函数参阅AssetPostprocessor 官方API
+            </summary>
+        </member>
+        <member name="M:ImporterSettingWindow.ChangeTextureMaxSize(System.String,System.Int32)">
+            <summary>
+            改变文件下所有的TextureImporter的MaxSize
+            </summary>
+        </member>
+    </members>
+</doc>
