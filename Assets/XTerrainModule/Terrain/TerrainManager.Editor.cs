@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using UnityEngine;
+using XFramework.Mathematics;
 
 namespace XFramework.TerrainMoudule
 {
@@ -846,7 +847,6 @@ namespace XFramework.TerrainMoudule
         public void SetTexture(Vector3 point, float radius, int index, float strength = 1)
         {
             Terrain terrain = GetTerrain(point);
-            Debug.Log(terrain);
             InternalSetTexture(point, radius, index, strength);
         }
 

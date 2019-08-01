@@ -1,32 +1,48 @@
 ﻿using UnityEngine;
 
-namespace XFramework
+namespace XFramework.Draw
 {
     /// <summary>
     /// 挂在相机上
     /// </summary>
-    public class RuntimeHandle : MonoBehaviour
+    public partial class RuntimeHandle : MonoBehaviour,IDraw
     {
+        private static Resources m_Resources;
+        private Resources Res
+        {
+            get
+            {
+                if (m_Resources == null)
+                    m_Resources = new Resources(m_SelectedColor);
+                return m_Resources;
+            }
+        }
+
+        // 锁轴
+        public bool LockX = false;
+        public bool LockY = false;
+        public bool LockZ = false;
+        public bool MouseOnHandle { get{ return m_SelectedAxis != RuntimeHandleAxis.None; } }
+
         private float m_HandleScale = 1;
         private float m_QuadScale = 0.2f;    // 方块长度和轴长度的比例
         private float m_ArrowScale = 1f;
         private float m_CubeScale = 0.15f;
         private float m_CircleRadius = 0.6f;
 
-        public static Vector3 m_QuadDir = Vector3.one;
+        [HideInInspector]
+        public Vector3 m_QuadDir = Vector3.one;
 
-        private static bool m_LockX = false;
-        private static bool m_LockY = false;
-        private static bool m_LockZ = false;
         private bool m_MouseDonw = false;    // 鼠标左键是否按下
+        private bool m_IsMove = false;       // 上一次操作后是否改变物体状态
 
         private RuntimeHandleAxis m_SelectedAxis = RuntimeHandleAxis.None; // 当前有碰撞的轴
         private TransformMode m_TransformMode = TransformMode.Position;    // 当前控制类型
         private BaseHandle m_CurrentHandle;
 
-        private readonly PositionHandle m_PositionHandle = new PositionHandle();
-        private readonly RotationHandle m_RotationHandle = new RotationHandle();
-        private readonly ScaleHandle m_ScaleHandle = new ScaleHandle();
+        private PositionHandle m_PositionHandle;
+        private RotationHandle m_RotationHandle;
+        private ScaleHandle m_ScaleHandle;
 
         private Color m_SelectedColor = Color.yellow;
         private Color m_SelectedColorA = new Color(1, 0.92f, 0.016f, 0.2f);
@@ -34,74 +50,51 @@ namespace XFramework
         private Color m_GreenA = new Color(0, 1, 0, 0.2f);
         private Color m_GlueA = new Color(0, 0, 1, 0.2f);
 
-        private Material m_LineMaterial;
-        private Material m_QuadeMaterial;
-        private Material m_ShapesMaterial;
+        public Matrix4x4 m_LocalToWorld { get; private set; }
+        public float m_ScreenScale { get; private set; }
+        public Transform m_Target { get; private set; }
+        public new Camera camera { get; private set; }
 
-        public static Matrix4x4 m_LocalToWorld { get; private set; }
-        public static float m_ScreenScale { get; private set; }
-        public static Transform m_Target { get; private set; }
-        public Transform testTarget;
-        public static new Camera camera { get; private set; }
+        // 存储角度手柄的圆圈点集
+        [HideInInspector]
+        public Vector3[] circlePosX;
+        [HideInInspector]
+        public Vector3[] circlePosY;
+        [HideInInspector]
+        public Vector3[] circlePosZ;
 
-        public static Vector3[] circlePosX;
-        public static Vector3[] circlePosY;
-        public static Vector3[] circlePosZ;
+        public event System.Action<Vector3> MoveEnd;
 
         private void Awake()
         {
+            camera = Camera.main;
+            
+            m_Target = transform;
 
-            m_LineMaterial = new Material(Shader.Find("RunTimeHandles/VertexColor"));
-            m_LineMaterial.color = Color.white;
-            m_QuadeMaterial = new Material(Shader.Find("RunTimeHandles/VertexColor"));
-            m_QuadeMaterial.color = Color.white;
-            m_ShapesMaterial = new Material(Shader.Find("RunTimeHandles/Shape"));
-            m_ShapesMaterial.color = Color.white;
-
-            camera = GetComponent<Camera>();
+            m_PositionHandle = new PositionHandle(this);
+            m_RotationHandle = new RotationHandle(this);
+            m_ScaleHandle = new ScaleHandle(this);
             m_CurrentHandle = m_PositionHandle;
+        }
 
-            // 测试用
-            if (testTarget)
-            {
-                SetTarget(testTarget);
-            }
+        private void OnEnable()
+        {
+            GameEntry.GetModule<GraphicsManager>().AddGraphics(camera,this);
+        }
+
+        private void OnDisable()
+        {
+            GameEntry.GetModule<GraphicsManager>().RemoveGraphics(camera, this);
         }
 
         private void Update()
         {
             if (m_Target)
             {
-                if (Input.GetKeyDown(KeyCode.W))
-                {
-                    m_CurrentHandle = m_PositionHandle;
-                    m_TransformMode = TransformMode.Position;
-                }
-                else if (Input.GetKeyDown(KeyCode.E))
-                {
-                    m_CurrentHandle = m_RotationHandle;
-                    m_TransformMode = TransformMode.Rotation;
-                }
-                else if (Input.GetKeyDown(KeyCode.R))
-                {
-                    m_CurrentHandle = m_ScaleHandle;
-                    m_TransformMode = TransformMode.Scale;
-                }
-
                 if (!m_MouseDonw)
                     m_SelectedAxis = m_CurrentHandle.SelectedAxis();
 
                 ControlTarget();
-            }
-        }
-
-        void OnPostRender()
-        {
-            if (m_Target)
-            {
-                m_ScreenScale = GetScreenScale(m_Target.position, camera);
-                m_LocalToWorld = Matrix4x4.TRS(m_Target.position, m_Target.rotation, Vector3.one * m_ScreenScale);
-                DrawHandle(m_Target);
             }
         }
 
@@ -121,8 +114,6 @@ namespace XFramework
                 case TransformMode.Scale:
                     DoSacle(target);
                     break;
-                default:
-                    break;
             }
         }
 
@@ -132,7 +123,7 @@ namespace XFramework
         private void DoPosition(Transform target)
         {
             DrawCoordinate(target, true);
-            DrawCoordinateArrow(target);
+            DrawCoordinateMesh(target, Res.arrowMesh, m_ArrowScale);
         }
 
         /// <summary>
@@ -143,7 +134,7 @@ namespace XFramework
         {
             Matrix4x4 transform = Matrix4x4.TRS(target.position, target.rotation, Vector3.one * m_ScreenScale);
 
-            m_LineMaterial.SetPass(0);
+            Res.lineMat.SetPass(0);
             GL.PushMatrix();
             GL.MultMatrix(transform);
             GL.Begin(GL.LINES);
@@ -164,7 +155,7 @@ namespace XFramework
         private void DoSacle(Transform target)
         {
             DrawCoordinate(target, false);
-            DrawCoordinateCube(target);
+            DrawCoordinateMesh(target, Res.cubeMesh, m_CubeScale);
         }
 
         /// <summary>
@@ -175,7 +166,7 @@ namespace XFramework
             Vector3 position = target.position;
             Matrix4x4 transform = Matrix4x4.TRS(target.position, target.rotation, Vector3.one * m_ScreenScale);
 
-            m_LineMaterial.SetPass(0);
+            Res.lineMat.SetPass(0);
             Vector3 x = Vector3.right * m_HandleScale;
             Vector3 y = Vector3.up * m_HandleScale;
             Vector3 z = Vector3.forward * m_HandleScale;
@@ -318,112 +309,26 @@ namespace XFramework
         }
 
         /// <summary>
-        /// 绘制坐标系箭头
+        /// 绘制坐标系三端的小几何体
         /// </summary>
-        private void DrawCoordinateArrow(Transform target)
+        private void DrawCoordinateMesh(Transform target, Mesh mesh, float scale)
         {
             Vector3 position = target.position;
             Vector3 euler = target.eulerAngles;
+            Vector3 meshScale = scale * m_ScreenScale * Vector3.one;
+
             // 画坐标轴的箭头 (箭头的锥顶不是它自身坐标的forword)
-            Mesh meshX = GLDraw.CreateArrow(m_SelectedAxis == RuntimeHandleAxis.X ? m_SelectedColor : Color.red, m_ArrowScale * m_ScreenScale);
-            Graphics.DrawMeshNow(meshX, position + target.right * m_HandleScale * m_ScreenScale, target.rotation * Quaternion.Euler(0, 0, -90));
-            Mesh meshY = GLDraw.CreateArrow(m_SelectedAxis == RuntimeHandleAxis.Y ? m_SelectedColor : Color.green, m_ArrowScale * m_ScreenScale);
-            Graphics.DrawMeshNow(meshY, position + target.up * m_HandleScale * m_ScreenScale, target.rotation);
-            Mesh meshZ = GLDraw.CreateArrow(m_SelectedAxis == RuntimeHandleAxis.Z ? m_SelectedColor : Color.blue, m_ArrowScale * m_ScreenScale);
-            Graphics.DrawMeshNow(meshZ, position + target.forward * m_HandleScale * m_ScreenScale, target.rotation * Quaternion.Euler(90, 0, 0));
-        }
+            (m_SelectedAxis == RuntimeHandleAxis.X ? Res.shapMatSelected : Res.shapMatRed).SetPass(0);
+            Matrix4x4 matrix = Matrix4x4.TRS(position + target.right * m_HandleScale * m_ScreenScale, target.rotation * Quaternion.Euler(0, 0, -90), meshScale);
+            Graphics.DrawMeshNow(mesh, matrix);
 
-        /// <summary>
-        /// 绘制坐标系小正方体
-        /// </summary>
-        private void DrawCoordinateCube(Transform target)
-        {
-            Vector3 position = target.position;
-            Vector3 euler = target.eulerAngles;
-            // 画坐标轴的小方块
-            m_ShapesMaterial.SetPass(0);
-            Mesh meshX = GLDraw.CreateCube(m_SelectedAxis == RuntimeHandleAxis.X ? m_SelectedColor : Color.red, Vector3.zero, m_CubeScale * m_ScreenScale);
-            Graphics.DrawMeshNow(meshX, position + target.right * m_HandleScale * m_ScreenScale, target.rotation * Quaternion.Euler(0, 0, -90));
-            Mesh meshY = GLDraw.CreateCube(m_SelectedAxis == RuntimeHandleAxis.Y ? m_SelectedColor : Color.green, Vector3.zero, m_CubeScale * m_ScreenScale);
-            Graphics.DrawMeshNow(meshY, position + target.up * m_HandleScale * m_ScreenScale, target.rotation);
-            Mesh meshZ = GLDraw.CreateCube(m_SelectedAxis == RuntimeHandleAxis.Z ? m_SelectedColor : Color.blue, Vector3.zero, m_CubeScale * m_ScreenScale);
-            Graphics.DrawMeshNow(meshZ, position + target.forward * m_HandleScale * m_ScreenScale, target.rotation * Quaternion.Euler(90, 0, 0));
+            (m_SelectedAxis == RuntimeHandleAxis.Y ? Res.shapMatSelected : Res.shapMatGreen).SetPass(0);
+            matrix = Matrix4x4.TRS(position + target.up * m_HandleScale * m_ScreenScale, target.rotation, meshScale);
+            Graphics.DrawMeshNow(mesh, matrix);
 
-            Mesh meshO = GLDraw.CreateCube(m_SelectedAxis == RuntimeHandleAxis.XYZ ? m_SelectedColor : Color.white, Vector3.zero, m_CubeScale * m_ScreenScale);
-            Graphics.DrawMeshNow(meshO, position, target.rotation);
-        }
-
-        /// <summary>
-        /// 控制目标
-        /// </summary>
-        private void ControlTarget()
-        {
-            if (Input.GetKeyDown(KeyCode.Mouse0))
-            {
-                m_MouseDonw = true;
-            }
-            if (Input.GetKey(KeyCode.Mouse0))
-            {
-                float inputX = Input.GetAxis("Mouse X");
-                float inputY = Input.GetAxis("Mouse Y");
-
-                float x = 0;
-                float y = 0;
-                float z = 0;
-
-                switch (m_SelectedAxis)
-                {
-                    case RuntimeHandleAxis.None:
-                        break;
-                    case RuntimeHandleAxis.X:
-                        if (!m_LockX)
-                            x = m_CurrentHandle.GetTransformAxis(new Vector2(inputX, inputY), m_Target.right);
-                        break;
-                    case RuntimeHandleAxis.Y:
-                        if (!m_LockY)
-                            y = m_CurrentHandle.GetTransformAxis(new Vector2(inputX, inputY), m_Target.up);
-                        break;
-                    case RuntimeHandleAxis.Z:
-                        if (!m_LockZ)
-                            z = m_CurrentHandle.GetTransformAxis(new Vector2(inputX, inputY), m_Target.forward);
-                        break;
-                    case RuntimeHandleAxis.XY:
-                        if (!m_LockX)
-                            x = m_CurrentHandle.GetTransformAxis(new Vector2(inputX, inputY), m_Target.right);
-                        if (!m_LockY)
-                            y = m_CurrentHandle.GetTransformAxis(new Vector2(inputX, inputY), m_Target.up);
-                        break;
-                    case RuntimeHandleAxis.XZ:
-                        if (!m_LockX)
-                            x = m_CurrentHandle.GetTransformAxis(new Vector2(inputX, inputY), m_Target.right);
-                        if (!m_LockZ)
-                            z = m_CurrentHandle.GetTransformAxis(new Vector2(inputX, inputY), m_Target.forward);
-                        break;
-                    case RuntimeHandleAxis.YZ:
-                        if (!m_LockY)
-                            y = m_CurrentHandle.GetTransformAxis(new Vector2(inputX, inputY), m_Target.up);
-                        if (!m_LockZ)
-                            z = m_CurrentHandle.GetTransformAxis(new Vector2(inputX, inputY), m_Target.forward);
-                        break;
-                    case RuntimeHandleAxis.XYZ:
-                        x = y = z = inputX;
-                        if (m_LockX)
-                            x = 0;
-                        if (m_LockY)
-                            y = 0;
-                        if (m_LockZ)
-                            z = 0;
-                        break;
-                    default:
-                        break;
-                }
-
-                m_CurrentHandle.Transform(new Vector3(x, y, z) * m_ScreenScale);
-            }
-            if (Input.GetKeyUp(KeyCode.Mouse0))
-            {
-                m_MouseDonw = false;
-            }
+            (m_SelectedAxis == RuntimeHandleAxis.Z ? Res.shapMatSelected : Res.shapMatBlue).SetPass(0);
+            matrix = Matrix4x4.TRS(position + target.forward * m_HandleScale * m_ScreenScale, target.rotation * Quaternion.Euler(90, 0, 0), meshScale);
+            Graphics.DrawMeshNow(mesh, matrix);
         }
 
         private void DrawScreenCircle(Color color, Vector3 position, int pixel)
@@ -431,7 +336,7 @@ namespace XFramework
             Vector2 temp = camera.WorldToScreenPoint(position);
             Vector3 offset = new Vector3(temp.x, temp.y, 0);
 
-            m_LineMaterial.SetPass(0);
+            Res.lineMat.SetPass(0);
             GL.PushMatrix();
             GL.LoadPixelMatrix();
             GL.Begin(GL.LINES);
@@ -465,7 +370,7 @@ namespace XFramework
             Matrix4x4 zTranform = Matrix4x4.TRS(Vector3.zero, rotation, Vector3.one);
             Matrix4x4 objToWorld = Matrix4x4.TRS(m_Target.position, Quaternion.identity, m_ScreenScale * Vector3.one);
 
-            m_LineMaterial.SetPass(0);
+            Res.lineMat.SetPass(0);
             GL.PushMatrix();
             GL.MultMatrix(objToWorld);
             GL.Begin(GL.LINES);
@@ -500,6 +405,85 @@ namespace XFramework
         }
 
 
+
+        /// <summary>
+        /// 控制目标
+        /// </summary>
+        private void ControlTarget()
+        {
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                m_MouseDonw = true;
+                m_IsMove = false;
+            }
+            if (Input.GetKey(KeyCode.Mouse0))
+            {
+                float inputX = Input.GetAxis("Mouse X");
+                float inputY = Input.GetAxis("Mouse Y");
+
+                float x = 0;
+                float y = 0;
+                float z = 0;
+
+                switch (m_SelectedAxis)
+                {
+                    case RuntimeHandleAxis.None:
+                        break;
+                    case RuntimeHandleAxis.X:
+                        if (!LockX)
+                            x = m_CurrentHandle.GetTransformAxis(new Vector2(inputX, inputY), m_Target.right);
+                        break;
+                    case RuntimeHandleAxis.Y:
+                        if (!LockY)
+                            y = m_CurrentHandle.GetTransformAxis(new Vector2(inputX, inputY), m_Target.up);
+                        break;
+                    case RuntimeHandleAxis.Z:
+                        if (!LockZ)
+                            z = m_CurrentHandle.GetTransformAxis(new Vector2(inputX, inputY), m_Target.forward);
+                        break;
+                    case RuntimeHandleAxis.XY:
+                        if (!LockX)
+                            x = m_CurrentHandle.GetTransformAxis(new Vector2(inputX, inputY), m_Target.right);
+                        if (!LockY)
+                            y = m_CurrentHandle.GetTransformAxis(new Vector2(inputX, inputY), m_Target.up);
+                        break;
+                    case RuntimeHandleAxis.XZ:
+                        if (!LockX)
+                            x = m_CurrentHandle.GetTransformAxis(new Vector2(inputX, inputY), m_Target.right);
+                        if (!LockZ)
+                            z = m_CurrentHandle.GetTransformAxis(new Vector2(inputX, inputY), m_Target.forward);
+                        break;
+                    case RuntimeHandleAxis.YZ:
+                        if (!LockY)
+                            y = m_CurrentHandle.GetTransformAxis(new Vector2(inputX, inputY), m_Target.up);
+                        if (!LockZ)
+                            z = m_CurrentHandle.GetTransformAxis(new Vector2(inputX, inputY), m_Target.forward);
+                        break;
+                    case RuntimeHandleAxis.XYZ:
+                        x = y = z = inputX;
+                        break;
+                    default:
+                        break;
+                }
+
+                if (!m_IsMove && (x != 0 || y != 0 || z != 0))
+                {
+                    m_IsMove = true;
+                }
+
+                m_CurrentHandle.Transform(new Vector3(x, y, z) * m_ScreenScale);
+            }
+            if (Input.GetKeyUp(KeyCode.Mouse0))
+            {
+                m_MouseDonw = false;
+                if (m_IsMove)
+                {
+                    MoveEnd?.Invoke(transform.position);
+                }
+            }
+        }
+
+
         // ------------- Tools -------------- //
 
 
@@ -523,21 +507,45 @@ namespace XFramework
 
         // ---------------- 外部调用 ------------------- //
 
-        public static void SetTarget(Transform _target)
+        public void SetTarget(Transform _target)
         {
             m_Target = _target;
         }
 
-        public static void ConfigFreeze(bool _lockX = false, bool _lockY = false, bool _locKZ = false)
+        public void SetMode(TransformMode mode)
         {
-            m_LockX = _lockX;
-            m_LockY = _lockY;
-            m_LockZ = _locKZ;
+            m_TransformMode = mode;
+            switch (mode)
+            {
+                case TransformMode.Position:
+                    m_CurrentHandle = m_PositionHandle;
+                    break;
+                case TransformMode.Rotation:
+                    m_CurrentHandle = m_RotationHandle;
+                    break;
+                case TransformMode.Scale:
+                    m_CurrentHandle = m_ScaleHandle;
+                    break;
+                default:
+                    break;
+            }
         }
 
-        public static void Disable()
+        public void SetFreeze(bool _lockX = false, bool _lockY = false, bool _locKZ = false)
         {
-            m_Target = null;
+            LockX = _lockX;
+            LockY = _lockY;
+            LockZ = _locKZ;
+        }
+
+        public void Draw()
+        {
+            if (m_Target)
+            {
+                m_ScreenScale = GetScreenScale(m_Target.position, camera);
+                m_LocalToWorld = Matrix4x4.TRS(m_Target.position, m_Target.rotation, Vector3.one * m_ScreenScale);
+                DrawHandle(m_Target);
+            }
         }
     }
 

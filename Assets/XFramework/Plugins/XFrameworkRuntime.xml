@@ -4,81 +4,106 @@
         <name>XFrameworkRuntime</name>
     </assembly>
     <members>
-        <member name="T:XFramework.Entity">
+        <member name="T:XFramework.IProgress">
+            <summary>
+            进度
+            </summary>
+        </member>
+        <member name="T:XFramework.Entity.Entity">
             <summary>
             单位实体
             </summary>
         </member>
-        <member name="M:XFramework.Entity.OnInit">
+        <member name="P:XFramework.Entity.Entity.ContainerName">
+            <summary>
+            所属容器名
+            </summary>
+        </member>
+        <member name="M:XFramework.Entity.Entity.OnInit">
             <summary>
             初始化
             </summary>
         </member>
-        <member name="M:XFramework.Entity.OnShow">
+        <member name="M:XFramework.Entity.Entity.OnAllocate(XFramework.Entity.EntityData)">
             <summary>
-            显示
+            被分配
             </summary>
         </member>
-        <member name="M:XFramework.Entity.OnHide">
+        <member name="M:XFramework.Entity.Entity.OnRecycle">
             <summary>
-            隐藏
+            被回收
             </summary>
         </member>
-        <member name="M:XFramework.Entity.OnAttached(XFramework.Entity)">
+        <member name="M:XFramework.Entity.Entity.OnAttached(XFramework.Entity.Entity)">
             <summary>
             附加子实体
             </summary>
             <param name="childEntity">子实体</param>
         </member>
-        <member name="M:XFramework.Entity.OnDetached(XFramework.Entity)">
+        <member name="M:XFramework.Entity.Entity.OnDetached(XFramework.Entity.Entity)">
             <summary>
             移除子实体
             </summary>
             <param name="parentEntity">子实体</param>
         </member>
-        <member name="M:XFramework.Entity.OnAttachTo(XFramework.Entity)">
+        <member name="M:XFramework.Entity.Entity.OnAttachTo(XFramework.Entity.Entity)">
             <summary>
             附加到别的实体上
             </summary>
             <param name="parentEntity">父实体</param>
         </member>
-        <member name="M:XFramework.Entity.OnDetachFrom(XFramework.Entity)">
+        <member name="M:XFramework.Entity.Entity.OnDetachFrom(XFramework.Entity.Entity)">
             <summary>
             被别的实体移除
             </summary>
             <param name="parentEntity">父实体</param>
         </member>
-        <member name="M:XFramework.Entity.OnUpdate(System.Single,System.Single)">
+        <member name="M:XFramework.Entity.Entity.OnUpdate(System.Single,System.Single)">
             <summary>
             轮询
             </summary>
         </member>
-        <member name="T:XFramework.EntityManager">
+        <member name="T:XFramework.Entity.EntityData">
+            <summary>
+            实体信息类
+            </summary>
+        </member>
+        <member name="T:XFramework.Entity.EntityManager">
             <summary>
             实体管理器
             </summary>
         </member>
-        <member name="F:XFramework.EntityManager.m_Id">
+        <member name="F:XFramework.Entity.EntityManager.m_Id">
             <summary>
             实体id，创建实体时用
             </summary>
         </member>
-        <member name="F:XFramework.EntityManager.m_EntityContainerDic">
+        <member name="F:XFramework.Entity.EntityManager.m_EntityContainerDic">
             <summary>
             存储对应实体容器的字典
             </summary>
         </member>
-        <member name="M:XFramework.EntityManager.AddTemplate``1(UnityEngine.GameObject)">
+        <member name="F:XFramework.Entity.EntityManager.m_EntityDic">
+            <summary>
+            存储所有在使用的实体字典
+            </summary>
+        </member>
+        <member name="F:XFramework.Entity.EntityManager.m_EntityInfoDic">
+            <summary>
+            存储所有实体（在使用的，被回收在池中的）
+            </summary>
+        </member>
+        <member name="M:XFramework.Entity.EntityManager.AddTemplate``1(UnityEngine.GameObject)">
             <summary>
             添加模板
             </summary>
         </member>
-        <member name="M:XFramework.EntityManager.AddTemplate``1(System.String,UnityEngine.GameObject)">
+        <member name="M:XFramework.Entity.EntityManager.AddTemplate``1(System.String,UnityEngine.GameObject)">
             <summary>
             添加模板
             </summary>
         </member>
-        <member name="M:XFramework.EntityManager.AddTemplate(System.String,System.Type,UnityEngine.GameObject)">
+        <member name="M:XFramework.Entity.EntityManager.AddTemplate(System.String,System.Type,UnityEngine.GameObject)">
             <summary>
             设置模板
             </summary>
@@ -86,67 +111,159 @@
             <param name="type">类型</param>
             <param name="template">模板</param>
         </member>
-        <member name="M:XFramework.EntityManager.Instantiate``1(UnityEngine.Vector3,UnityEngine.Quaternion)">
+        <member name="M:XFramework.Entity.EntityManager.Allocate``1(UnityEngine.Vector3,UnityEngine.Quaternion)">
             <summary>
-            实例化实体
+            分配实体
             </summary>
+            <typeparam name="T">实体子类型</typeparam>
+            <param name="pos">位置</param>
+            <param name="quaternion">朝向</param>
             <returns></returns>
         </member>
-        <member name="M:XFramework.EntityManager.GetContainer(System.String)">
+        <member name="M:XFramework.Entity.EntityManager.Allocate``1(XFramework.Entity.EntityData,UnityEngine.Vector3,UnityEngine.Quaternion)">
+            <summary>
+            分配实体
+            </summary>
+            <typeparam name="T">实体子类型</typeparam>
+            <param name="entityData">实体数据</param>
+            <param name="pos">位置</param>
+            <param name="quaternion">朝向</param>
+            <returns>实体</returns>
+        </member>
+        <member name="M:XFramework.Entity.EntityManager.Allocate``1(System.String,XFramework.Entity.EntityData,UnityEngine.Vector3,UnityEngine.Quaternion)">
+            <summary>
+            分配实体
+            </summary>
+        </member>
+        <member name="M:XFramework.Entity.EntityManager.Allocate(System.String,UnityEngine.Vector3,UnityEngine.Quaternion)">
+            <summary>
+            分配实体
+            </summary>
+            <param name="key">键值</param>
+            <param name="pos">位置</param>
+            <param name="quaternion">朝向</param>
+            <returns>实体</returns>
+        </member>
+        <member name="M:XFramework.Entity.EntityManager.Allocate(System.String,System.Int32,XFramework.Entity.EntityData,UnityEngine.Vector3,UnityEngine.Quaternion)">
+            <summary>
+            分配实体
+            </summary>
+            <param name="key">键值</param>
+            <param name="id">实体Id</param>
+            <param name="entityData">实体信息</param>
+            <param name="pos">位置</param>
+            <param name="quaternion">角度</param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Entity.EntityManager.Recycle(XFramework.Entity.Entity)">
+            <summary>
+            回收实体
+            </summary>
+            <param name="entity">目标实体</param>
+        </member>
+        <member name="M:XFramework.Entity.EntityManager.Recycle(System.Int32)">
+            <summary>
+            回收实体
+            </summary>
+            <param name="id">目标实体Id</param>
+        </member>
+        <member name="M:XFramework.Entity.EntityManager.Attach(XFramework.Entity.Entity,XFramework.Entity.Entity)">
+            <summary>
+            附加实体，将child附加到parent上
+            </summary>
+            <param name="child"></param>
+            <param name="parent"></param>
+        </member>
+        <member name="M:XFramework.Entity.EntityManager.Detach(XFramework.Entity.Entity)">
+            <summary>
+            移除实体，将child从它的父物体上移除
+            </summary>
+            <param name="child"></param>
+            <param name="parent"></param>
+        </member>
+        <member name="M:XFramework.Entity.EntityManager.GetContainer(System.String)">
             <summary>
             获取实体容器
             </summary>
-            <param name="entityName">实体名</param>
+            <param name="containerName">实体名</param>
         </member>
-        <member name="M:XFramework.EntityManager.GetEntity(UnityEngine.GameObject)">
+        <member name="M:XFramework.Entity.EntityManager.GetEntity(UnityEngine.GameObject)">
             <summary>
             获取实体
             </summary>
         </member>
-        <member name="M:XFramework.EntityManager.GetEntity(System.Int32)">
+        <member name="M:XFramework.Entity.EntityManager.GetEntity(System.Int32)">
             <summary>
             获取实体
             </summary>
             <param name="entityId">实体Id</param>
         </member>
-        <member name="M:XFramework.EntityManager.GetEntities(System.String)">
+        <member name="M:XFramework.Entity.EntityManager.GetEntities(System.String)">
             <summary>
             获取同名的所有实体
             </summary>
             <param name="entityName"></param>
         </member>
-        <member name="M:XFramework.EntityManager.Clean(System.Boolean)">
+        <member name="M:XFramework.Entity.EntityManager.GetEntityInfo(XFramework.Entity.Entity)">
             <summary>
-            清除未在使用的实体
+            获取一个实体的父子关系
             </summary>
-            <param name="deleteUselessContainer">是否删除不含实体的容器</param>
+            <param name="entity"></param>
+            <returns></returns>
         </member>
-        <member name="T:XFramework.EntityManager.EntityContainer">
+        <member name="M:XFramework.Entity.EntityManager.Clean(System.Int32)">
+            <summary>
+            清理实体池
+            </summary>
+            <param name="count">容器实体池的最大保留量</param>
+        </member>
+        <member name="M:XFramework.Entity.EntityManager.Clean(System.String,System.Int32)">
+            <summary>
+            清理某个容器实体池
+            </summary>
+            <param name="containerName">容器名</param>
+            <param name="count">容器实体池的最大保留量</param>
+        </member>
+        <member name="T:XFramework.Entity.EntityManager.EntityContainer">
             <summary>
             实体容器
             </summary>
         </member>
-        <member name="F:XFramework.EntityManager.EntityContainer.name">
+        <member name="F:XFramework.Entity.EntityManager.EntityContainer.name">
             <summary>
             容器名
             </summary>
         </member>
-        <member name="F:XFramework.EntityManager.EntityContainer.type">
+        <member name="F:XFramework.Entity.EntityManager.EntityContainer.type">
             <summary>
             容器类型
             </summary>
         </member>
-        <member name="F:XFramework.EntityManager.EntityContainer.m_Entities">
+        <member name="F:XFramework.Entity.EntityManager.EntityContainer.m_Entities">
             <summary>
             实体列表
             </summary>
         </member>
-        <member name="F:XFramework.EntityManager.EntityContainer.m_Template">
+        <member name="F:XFramework.Entity.EntityManager.EntityContainer.m_Template">
             <summary>
-            对象池
+            模板
             </summary>
         </member>
-        <member name="M:XFramework.EntityManager.EntityContainer.Instantiate(System.Int32,UnityEngine.Vector3,UnityEngine.Quaternion)">
+        <member name="F:XFramework.Entity.EntityManager.EntityContainer.m_Pool">
+            <summary>
+            实体池
+            </summary>
+        </member>
+        <member name="M:XFramework.Entity.EntityManager.EntityContainer.Instantiate(System.Int32,UnityEngine.Vector3,UnityEngine.Quaternion)">
+            <summary>
+            实体实例化及初始化
+            </summary>
+            <param name="id">唯一标识符</param>
+            <param name="pos">位置</param>
+            <param name="quaternion">朝向</param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Entity.EntityManager.EntityContainer.Allocate(System.Int32,UnityEngine.Vector3,UnityEngine.Quaternion,XFramework.Entity.EntityData)">
             <summary>
             实例化物体
             </summary>
@@ -154,342 +271,310 @@
             <param name="quaternion">角度</param>
             <returns></returns>
         </member>
-        <member name="M:XFramework.EntityManager.EntityContainer.GetEntities">
+        <member name="M:XFramework.Entity.EntityManager.EntityContainer.Recycle(XFramework.Entity.Entity)">
+            <summary>
+            回收实体
+            </summary>
+            <param name="entity">实体</param>
+            <returns>是否回收成功</returns>
+        </member>
+        <member name="M:XFramework.Entity.EntityManager.EntityContainer.GetEntities">
             <summary>
             获取容器中的所有实体
             </summary>
         </member>
-        <member name="M:XFramework.EntityManager.EntityContainer.OnUpdate(System.Single,System.Single)">
+        <member name="M:XFramework.Entity.EntityManager.EntityContainer.Clean(System.Int32,System.Action{System.Int32})">
+            <summary>
+            清理实体池
+            </summary>
+            <param name="count">清理后实体池的最大数量</param>
+            <param name="callBack"></param>
+        </member>
+        <member name="M:XFramework.Entity.EntityManager.EntityContainer.OnUpdate(System.Single,System.Single)">
             <summary>
             轮询
             </summary>
             <param name="elapseSeconds">逻辑运行时间</param>
             <param name="realElapseSeconds">实际运行时间</param>
         </member>
-        <member name="F:XFramework.EntityManager.Pool`1.template">
+        <member name="T:XFramework.Entity.EntityManager.EntityInfo">
             <summary>
-            对象池模板
+            实体信息
+            存储实体的父子关系以及对应实体
             </summary>
         </member>
-        <member name="F:XFramework.EntityManager.Pool`1.pooledObjects">
+        <member name="F:XFramework.Entity.EntityManager.EntityInfo.m_Entity">
             <summary>
-            对象池链表
+            对应的实体
             </summary>
         </member>
-        <member name="F:XFramework.EntityManager.Pool`1.currentIndex">
+        <member name="F:XFramework.Entity.EntityManager.EntityInfo.m_ParentEntity">
             <summary>
-            当前指向链表位置索引
+            父实体
             </summary>
         </member>
-        <member name="F:XFramework.EntityManager.Pool`1.maxCount">
+        <member name="F:XFramework.Entity.EntityManager.EntityInfo.m_ChildEntities">
             <summary>
-            池的最大容量
+            子实体组
             </summary>
         </member>
-        <member name="M:XFramework.EntityManager.Pool`1.#ctor(UnityEngine.GameObject,System.Int32)">
+        <member name="P:XFramework.Entity.EntityManager.EntityInfo.Entity">
             <summary>
-            构造函数
-            </summary>
-            <param name="template"></param>
-            <param name="maxCount"></param>
-        </member>
-        <member name="M:XFramework.EntityManager.Pool`1.Clear">
-            <summary>
-            将对象池的数量回归5
+            对应的实体
             </summary>
         </member>
-        <member name="M:XFramework.EntityManager.Pool`1.Allocate">
+        <member name="P:XFramework.Entity.EntityManager.EntityInfo.Parent">
             <summary>
-            获取对象池中可以使用的对象。
+            父实体
             </summary>
         </member>
-        <member name="M:XFramework.EntityManager.Pool`1.Recycle(XFramework.Entity)">
+        <member name="M:XFramework.Entity.EntityManager.EntityInfo.GetChilds">
             <summary>
-            回收
+            获取所有子实体
             </summary>
         </member>
-        <member name="M:XFramework.EntityManager.Pool`1.Create(UnityEngine.GameObject,System.Boolean)">
+        <member name="M:XFramework.Entity.EntityManager.EntityInfo.AddChild(XFramework.Entity.Entity)">
             <summary>
-            为对象池新增一个对象
+            添加子实体
             </summary>
+            <param name="childEntity">子实体</param>
         </member>
-        <member name="T:XFramework.Fsm`1">
+        <member name="M:XFramework.Entity.EntityManager.EntityInfo.RemoveChild(XFramework.Entity.Entity)">
+            <summary>
+            移除子实体
+            </summary>
+            <param name="childEntity">子实体</param>
+        </member>
+        <member name="T:XFramework.Fsm.Fsm`1">
             <summary>
             状态机
             </summary>
             <typeparam name="TState">子类状态机对应的状态基类</typeparam>
         </member>
-        <member name="F:XFramework.Fsm`1.m_StateDic">
+        <member name="F:XFramework.Fsm.Fsm`1.m_StateDic">
             <summary>
             存储该状态机包含的所有状态
             </summary>
         </member>
-        <member name="M:XFramework.Fsm`1.GetState``1">
+        <member name="M:XFramework.Fsm.Fsm`1.GetState``1">
             <summary>
             获取一个状态
             </summary>
             <typeparam name="T"></typeparam>
             <returns></returns>
         </member>
-        <member name="M:XFramework.Fsm`1.CreateState``1">
+        <member name="M:XFramework.Fsm.Fsm`1.GetState(System.Type)">
+            <summary>
+            获取一个状态
+            </summary>
+            <typeparam name="T">状态类型</typeparam>
+        </member>
+        <member name="M:XFramework.Fsm.Fsm`1.CreateState``1">
             <summary>
             创建一个状态
             </summary>
         </member>
-        <member name="M:XFramework.Fsm`1.GetCurrentState">
+        <member name="M:XFramework.Fsm.Fsm`1.CreateState(System.Type)">
+            <summary>
+            创建一个状态
+            </summary>
+            <param name="type">状态类型</param>
+        </member>
+        <member name="M:XFramework.Fsm.Fsm`1.GetCurrentState">
             <summary>
             获取当前状态
             </summary>
-            <returns></returns>
         </member>
-        <member name="M:XFramework.Fsm`1.StartFsm``1">
+        <member name="M:XFramework.Fsm.Fsm`1.GetCurrentState``1">
+            <summary>
+            获取当前状态
+            </summary>
+        </member>
+        <member name="M:XFramework.Fsm.Fsm`1.StartFsm``1">
             <summary>
             开启状态机
             </summary>
             <typeparam name="KState"></typeparam>
         </member>
-        <member name="M:XFramework.Fsm`1.ChangeState``1">
+        <member name="M:XFramework.Fsm.Fsm`1.ChangeState``1">
             <summary>
             状态切换
             </summary>
-            <typeparam name="KState"></typeparam>
+            <typeparam name="KState">目标状态</typeparam>
         </member>
-        <member name="T:XFramework.IFsm">
-            <summary>
-            状态机接口
-            </summary>
-        </member>
-        <member name="P:XFramework.IFsm.CurrentState">
-            <summary>
-            状态机当前状态
-            </summary>
-        </member>
-        <member name="P:XFramework.IFsm.IsActive">
-            <summary>
-            状态机是否激活
-            </summary>
-        </member>
-        <member name="M:XFramework.IFsm.OnUpdate">
-            <summary>
-            每帧调用
-            </summary>
-        </member>
-        <member name="M:XFramework.IFsm.StartFsm``1">
-            <summary>
-            从某一状态开始一个状态机
-            </summary>
-            <typeparam name="T"></typeparam>
-        </member>
-        <member name="M:XFramework.IFsm.ChangeState``1">
+        <member name="M:XFramework.Fsm.Fsm`1.ChangeState(System.Type)">
             <summary>
             状态切换
             </summary>
+            <param name="type">目标状态</param>
         </member>
-        <member name="T:XFramework.FsmManager">
+        <member name="T:XFramework.Fsm.FsmManager">
             <summary>
             状态机管理类
             </summary>
         </member>
-        <member name="F:XFramework.FsmManager.m_FsmDic">
+        <member name="F:XFramework.Fsm.FsmManager.m_FsmDic">
             <summary>
             存储所有状态机的字典
             </summary>
         </member>
-        <member name="P:XFramework.FsmManager.Count">
+        <member name="P:XFramework.Fsm.FsmManager.Count">
             <summary>
             状态机的数量
             </summary>
         </member>
-        <member name="M:XFramework.FsmManager.OnUpdate">
+        <member name="M:XFramework.Fsm.FsmManager.OnUpdate">
             <summary>
             每帧调用处于激活状态的状态机
             </summary>
         </member>
-        <member name="M:XFramework.FsmManager.HasFsm``1">
+        <member name="M:XFramework.Fsm.FsmManager.HasFsm``1">
             <summary>
             是否包含某种状态机
             </summary>
         </member>
-        <member name="M:XFramework.FsmManager.HasFsm(System.Type)">
+        <member name="M:XFramework.Fsm.FsmManager.HasFsm(System.Type)">
             <summary>
             是否包含某种状态机
             </summary>
         </member>
-        <member name="M:XFramework.FsmManager.GetFsm``1">
+        <member name="M:XFramework.Fsm.FsmManager.GetFsm``1">
             <summary>
             获取一个状态机
             </summary>
             <typeparam name="TFsm"></typeparam>
         </member>
-        <member name="M:XFramework.FsmManager.GetCurrentState``1">
+        <member name="M:XFramework.Fsm.FsmManager.GetCurrentState``1">
             <summary>
             获取对应状态机当前所处的状态
             </summary>
             <typeparam name="TFsm"></typeparam>
         </member>
-        <member name="M:XFramework.FsmManager.StartFsm``2">
-            <summary>
-            开启一个状态机
-            </summary>
-            <typeparam name="TFsm"></typeparam>
-            <typeparam name="KState"></typeparam>
-        </member>
-        <member name="M:XFramework.FsmManager.ChangeState``2">
+        <member name="M:XFramework.Fsm.FsmManager.ChangeState``2">
             <summary>
             切换对应状态机到对应状态
             </summary>
             <typeparam name="TFsm">状态机类型</typeparam>
             <typeparam name="KState">目标状态</typeparam>
         </member>
-        <member name="M:XFramework.FsmManager.CreateFsm``1">
+        <member name="M:XFramework.Fsm.FsmManager.CreateFsm``1">
             <summary>
             根据类型创建一个状态机
             </summary>
         </member>
-        <member name="T:XFramework.FsmState">
+        <member name="M:XFramework.Fsm.FsmManager.CreateFsm(System.Type)">
+            <summary>
+            创建一个状态机
+            </summary>
+            <param name="type">状态机类型</param>
+            <returns>状态机</returns>
+        </member>
+        <member name="M:XFramework.Fsm.FsmManager.DestroyFsm``1">
+            <summary>
+            删除一个状态机
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:XFramework.Fsm.FsmManager.DestroyFsm(System.Type)">
+            <summary>
+            删除一个状态机
+            </summary>
+            <param name="type">状态机类型</param>
+        </member>
+        <member name="T:XFramework.Fsm.FsmState">
             <summary>
             状态基类，考虑要不要改为接口
             </summary>
         </member>
-        <member name="T:XFramework.MouseFsm">
+        <member name="T:XFramework.Fsm.IFsm">
+            <summary>
+            状态机接口
+            </summary>
+        </member>
+        <member name="P:XFramework.Fsm.IFsm.CurrentState">
+            <summary>
+            状态机当前状态
+            </summary>
+        </member>
+        <member name="P:XFramework.Fsm.IFsm.IsActive">
+            <summary>
+            状态机是否激活
+            </summary>
+        </member>
+        <member name="M:XFramework.Fsm.IFsm.OnUpdate">
+            <summary>
+            每帧调用
+            </summary>
+        </member>
+        <member name="M:XFramework.Fsm.IFsm.StartFsm``1">
+            <summary>
+            从某一状态开始一个状态机
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:XFramework.Fsm.IFsm.ChangeState``1">
+            <summary>
+            状态切换
+            </summary>
+        </member>
+        <member name="T:XFramework.Fsm.MouseFsm">
             <summary>
             鼠标事件
             </summary>
         </member>
-        <member name="P:XFramework.MouseFsm.CurrentMouseState">
+        <member name="P:XFramework.Fsm.MouseFsm.CurrentMouseState">
             <summary>
             当前鼠标状态
             </summary>
         </member>
-        <member name="F:XFramework.MouseFsm.lastPosition">
+        <member name="F:XFramework.Fsm.MouseFsm.lastPosition">
             <summary>
             鼠标在上一帧的位置
             </summary>
         </member>
-        <member name="P:XFramework.MouseFsm.MouseMove">
+        <member name="P:XFramework.Fsm.MouseFsm.MouseMove">
             <summary>
             鼠标是否移动
             </summary>
         </member>
-        <member name="M:XFramework.MouseState.OnLeftButtonHold">
+        <member name="M:XFramework.Fsm.MouseState.OnLeftButtonHold">
             <summary>
             左键保持按下状态
             </summary>
         </member>
-        <member name="M:XFramework.MouseState.OnLeftButtonUp">
+        <member name="M:XFramework.Fsm.MouseState.OnLeftButtonUp">
             <summary>
             左键抬起
             </summary>
         </member>
-        <member name="M:XFramework.MouseState.OnRightButtonDown">
+        <member name="M:XFramework.Fsm.MouseState.OnRightButtonDown">
             <summary>
             右键按下
             </summary>
         </member>
-        <member name="M:XFramework.MouseState.OnRightButtonHold">
+        <member name="M:XFramework.Fsm.MouseState.OnRightButtonHold">
             <summary>
             右键保持按下状态
             </summary>
         </member>
-        <member name="M:XFramework.MouseState.OnRightButtonUp">
+        <member name="M:XFramework.Fsm.MouseState.OnRightButtonUp">
             <summary>
             右键抬起
             </summary>
         </member>
-        <member name="M:XFramework.MouseState.OnCenterButtonDown">
+        <member name="M:XFramework.Fsm.MouseState.OnCenterButtonDown">
             <summary>
             右键按下
             </summary>
         </member>
-        <member name="M:XFramework.MouseState.OnCenterButtonHold">
+        <member name="M:XFramework.Fsm.MouseState.OnCenterButtonHold">
             <summary>
             右键保持按下状态
             </summary>
         </member>
-        <member name="M:XFramework.MouseState.OnCenterButtonUp">
+        <member name="M:XFramework.Fsm.MouseState.OnCenterButtonUp">
             <summary>
             右键抬起
-            </summary>
-        </member>
-        <member name="T:XFramework.OldFsm.Transition">
-            <summary>
-            ״̬ת������
-            </summary>
-        </member>
-        <member name="T:XFramework.OldFsm.FSMStateID">
-            <summary>
-            ״̬
-            </summary>
-        </member>
-        <member name="M:XFramework.OldFsm.AdvancedFSM.AddFSMState(XFramework.OldFsm.FSMState)">
-            <summary>
-            Add New State into the list
-            </summary>
-        </member>
-        <member name="M:XFramework.OldFsm.AdvancedFSM.PerformTransition(XFramework.OldFsm.Transition)">
-            <summary>
-            This method tries to change the state the FSM is in based on
-            the current state and the transition passed. 
-            </summary>
-        </member>
-        <member name="F:XFramework.OldFsm.FSM.enemy">
-            <summary>
-            攻击目标
-            </summary>
-        </member>
-        <member name="F:XFramework.OldFsm.FSM.attackPos">
-            <summary>
-            攻击目标点
-            </summary>
-        </member>
-        <member name="F:XFramework.OldFsm.FSM.targetPos">
-            <summary>
-            移动目标点
-            </summary>
-        </member>
-        <member name="F:XFramework.OldFsm.FSM.shootRate">
-            <summary>
-            攻击时间间隔
-            </summary>
-        </member>
-        <member name="F:XFramework.OldFsm.FSM.time">
-            <summary>
-            时间
-            </summary>
-        </member>
-        <member name="F:XFramework.OldFsm.FSM.timer">
-            <summary>
-            时间控制
-            </summary>
-        </member>
-        <!-- 对于成员“T:XFramework.OldFsm.FSMState”忽略有格式错误的 XML 注释 -->
-        <member name="M:XFramework.OldFsm.FSMState.DeleteTransition(XFramework.OldFsm.Transition)">
-            <summary>
-            This method deletes a pair transition-state from this state´s map.    
-            </summary>
-        </member>
-        <member name="M:XFramework.OldFsm.FSMState.GetOutputState(XFramework.OldFsm.Transition)">
-            <summary>
-            This method returns the new state the FSM should be if
-               this state receives a transition  
-            </summary>
-        </member>
-        <member name="M:XFramework.OldFsm.FSMState.Reason(UnityEngine.Transform,UnityEngine.Transform)">
-            <summary>
-            Decides if the state should transition to another on its list
-            NPC is a reference to the npc tha is controlled by this class
-            </summary>
-        </member>
-        <member name="M:XFramework.OldFsm.FSMState.Act(UnityEngine.Transform,UnityEngine.Transform)">
-            <summary>
-            This method controls the behavior of the NPC in the game World.
-            Every action, movement or communication the NPC does should be placed here
-            NPC is a reference to the npc tha is controlled by this class
-            </summary>
-        </member>
-        <member name="M:XFramework.OldFsm.FSMState.FindNextPoint">
-            <summary>
-            Find the next semi-random patrol point
             </summary>
         </member>
         <member name="M:XFramework.GameEntry.ModuleUpdate(System.Single,System.Single)">
@@ -512,29 +597,29 @@
             </summary>
             <typeparam name="T"></typeparam>
         </member>
-        <member name="M:XFramework.GameEntry.CreateModule(System.Type)">
+        <member name="M:XFramework.GameEntry.CreateModule(System.Type,System.Object[])">
             <summary>
             创建一个模块
             </summary>
             <param name="moduleType"></param>
             <returns></returns>
         </member>
-        <member name="T:XFramework.GLDraw">
+        <member name="T:XFramework.Draw.GLDraw">
             <summary>
             用于构造几何体Mesh
             </summary>
         </member>
-        <member name="M:XFramework.GLDraw.CreateArrow(UnityEngine.Color,System.Single)">
+        <member name="M:XFramework.Draw.GLDraw.CreateArrow(UnityEngine.Color,System.Single)">
             <summary>
             创建一个轴的箭头网格
             </summary>
         </member>
-        <member name="M:XFramework.GLDraw.CreateCube(UnityEngine.Color,UnityEngine.Vector3,System.Single,System.Single,System.Single,System.Single)">
+        <member name="M:XFramework.Draw.GLDraw.CreateCube(UnityEngine.Color,UnityEngine.Vector3,System.Single,System.Single,System.Single,System.Single)">
             <summary>
             创建一个方块网格 
             </summary>
         </member>
-        <member name="M:XFramework.GLDraw.CreateSphere(System.Int32,System.Single,System.Int32)">
+        <member name="M:XFramework.Draw.GLDraw.CreateSphere(System.Int32,System.Single,System.Int32)">
             <summary>
             返回一个球的网格
             </summary>
@@ -542,31 +627,35 @@
             <param name="radius"></param>
             <returns></returns>
         </member>
-        <member name="M:XFramework.GLDraw.CreateCylinder(UnityEngine.Vector3,System.Single,System.Single,System.Int32)">
+        <member name="M:XFramework.Draw.GLDraw.CreateCylinder(UnityEngine.Vector3,System.Single,System.Single,System.Int32)">
             <summary>
             圆柱
             </summary>
         </member>
-        <member name="M:XFramework.GLDraw.CreatePolygon(UnityEngine.Vector3[],System.Single,System.Int32)">
+        <member name="M:XFramework.Draw.GLDraw.CreatePolygon(UnityEngine.Vector3[],System.Single,System.Int32,System.Boolean)">
             <summary>
             凹/凸多边形空域
             </summary>
-            <param name="positions"></param>
-            <param name="height"></param>
+            <param name="pointsDown">下表面点集</param>
+            <param name="height">空域高度</param>
+            <param name="colorInt">颜色</param>
         </member>
-        <member name="M:XFramework.GLDraw.CreatePolygon(UnityEngine.Vector3[],System.Int32)">
+        <member name="M:XFramework.Draw.GLDraw.CreatePolygon(UnityEngine.Vector3[],System.Int32,System.Boolean)">
             <summary>
             凹/凸多边形空域 每个点高度不一样时 可以用来画扇形区域
             </summary>
-            <param name="positions"></param>
+            <param name="positions">下表面点集 + 上表面点集</param>
+            <param name="colorInt">颜色</param>
+            <returns></returns>
         </member>
-        <member name="M:XFramework.GLDraw.CreateLineMesh_Old(UnityEngine.Vector3[],System.Single,System.Single,System.Int32)">
+        <member name="M:XFramework.Draw.GLDraw.GetPolygonSort(System.Collections.Generic.List{UnityEngine.Vector3},System.Boolean)">
             <summary>
-            立体线，可用于画空中走廊
+            获取凹多边形平面排序
             </summary>
-            <param name="positions">空中走廊所有顶点</param>
+            <param name="points"> 关键点集合 </param>
+            <returns></returns>
         </member>
-        <member name="M:XFramework.GLDraw.CreateLineMesh(System.Collections.Generic.List{UnityEngine.Vector3},System.Single,System.Single,System.Int32)">
+        <member name="M:XFramework.Draw.GLDraw.CreateLineMesh(System.Collections.Generic.List{UnityEngine.Vector3},System.Single,System.Single,System.Int32)">
             <summary>
             立体线，可用于画空中走廊
             </summary>
@@ -575,7 +664,7 @@
             <param name="_height">高度</param>
             <returns></returns>
         </member>
-        <member name="M:XFramework.GLDraw.CreateHemisphere(UnityEngine.Vector3,System.Single,System.Int32,System.Int32)">
+        <member name="M:XFramework.Draw.GLDraw.CreateHemisphere(UnityEngine.Vector3,System.Single,System.Int32,System.Int32)">
             <summary>
             半球
             </summary>
@@ -583,134 +672,119 @@
             <param name="radius"></param>
             <param name="angle">默认为半球，通过修改角度可以修改球的缺省</param>
         </member>
-        <member name="M:XFramework.GLDraw.CreatConvexPolgonao(UnityEngine.Vector3[],System.Single,System.Int32)">
+        <member name="M:XFramework.Draw.GLDraw.CreatConvexPolgonao(UnityEngine.Vector3[],System.Single,System.Int32)">
             <summary>
             凸多边形
             </summary>
             <param name="positions">所有底面顶点集合</param>
             <param name="height">按照高度从底面点向上的延伸顶面点</param>
         </member>
-        <member name="T:XFramework.GraphicsManager">
+        <member name="T:XFramework.Draw.GraphicsManager">
             <summary>
             GL管理器
             </summary>
         </member>
-        <member name="F:XFramework.GraphicsManager.m_GraphicsDic">
+        <member name="F:XFramework.Draw.GraphicsManager.m_GraphicsDic">
             <summary>
             渲染列表
             </summary>
         </member>
-        <member name="P:XFramework.GraphicsManager.InternalColoredMat">
-            <summary>
-            内置shader，可用于画线
-            </summary>
-        </member>
-        <member name="P:XFramework.GraphicsManager.InternalClearMat">
-            <summary>
-            内置shader
-            </summary>
-        </member>
-        <member name="P:XFramework.GraphicsManager.InternalErrorMat">
-            <summary>
-            内置shader
-            </summary>
-        </member>
-        <member name="M:XFramework.GraphicsManager.AddGraphics(UnityEngine.Camera,XFramework.IDraw)">
+        <member name="M:XFramework.Draw.GraphicsManager.AddGraphics(UnityEngine.Camera,XFramework.Draw.IDraw)">
             <summary>
             添加一个渲染任务
             </summary>
             <param name="camera"></param>
             <param name="paniter"></param>
         </member>
-        <member name="M:XFramework.GraphicsManager.AddGraphics(UnityEngine.Camera,System.Action)">
+        <member name="M:XFramework.Draw.GraphicsManager.AddGraphics(UnityEngine.Camera,System.Action)">
             <summary>
             添加一个渲染任务
             </summary>
             <param name="camera"></param>
             <param name="action"></param>
         </member>
-        <member name="M:XFramework.GraphicsManager.RemoveGraphics(UnityEngine.Camera,XFramework.IDraw)">
+        <member name="M:XFramework.Draw.GraphicsManager.RemoveGraphics(UnityEngine.Camera,XFramework.Draw.IDraw)">
             <summary>
             移除一个渲染任务
             </summary>
             <param name="camera"></param>
             <param name="paniter"></param>
         </member>
-        <member name="M:XFramework.GraphicsManager.RemoveGraphics(UnityEngine.Camera,System.Action)">
+        <member name="M:XFramework.Draw.GraphicsManager.RemoveGraphics(UnityEngine.Camera,System.Action)">
             <summary>
             移除一个渲染任务
             </summary>
             <param name="camera"></param>
             <param name="action"></param>
         </member>
-        <member name="M:XFramework.GraphicsManager.OpenGraphics(UnityEngine.Camera)">
+        <member name="M:XFramework.Draw.GraphicsManager.OpenGraphics(UnityEngine.Camera)">
             <summary>
             打开一个渲染层
             </summary>
             <param name="camera"></param>
         </member>
-        <member name="M:XFramework.GraphicsManager.CloseGraphics(UnityEngine.Camera)">
+        <member name="M:XFramework.Draw.GraphicsManager.CloseGraphics(UnityEngine.Camera)">
             <summary>
             关闭一个渲染层
             </summary>
             <param name="camera"></param>
         </member>
-        <member name="M:XFramework.GraphicsManager.ClearGraphics(UnityEngine.Camera)">
+        <member name="M:XFramework.Draw.GraphicsManager.ClearGraphics(UnityEngine.Camera)">
             <summary>
             清空一个渲染队列的所有渲染任务
             </summary>
             <param name="camera"></param>
         </member>
-        <member name="T:XFramework.GraphicsMono">
+        <member name="T:XFramework.Draw.GraphicsMono">
             <summary>
             用于在屏幕上绘制图形
             </summary>
         </member>
-        <member name="F:XFramework.GraphicsMono.m_IsActive">
+        <member name="F:XFramework.Draw.GraphicsMono.m_IsActive">
             <summary>
             是否激活
             </summary>
         </member>
-        <member name="F:XFramework.GraphicsMono.m_Painters">
+        <member name="F:XFramework.Draw.GraphicsMono.m_Painters">
             <summary>
             绘制者集合
             </summary>
         </member>
-        <member name="F:XFramework.GraphicsMono.m_Action">
+        <member name="F:XFramework.Draw.GraphicsMono.m_Action">
             <summary>
             绘制方法
             </summary>
         </member>
-        <member name="M:XFramework.GraphicsMono.AddGraphics(XFramework.IDraw)">
+        <member name="M:XFramework.Draw.GraphicsMono.AddGraphics(XFramework.Draw.IDraw)">
             <summary>
             添加一个绘制者
             </summary>
             <param name="paniter"></param>
         </member>
-        <member name="M:XFramework.GraphicsMono.AddGraphics(System.Action)">
+        <member name="M:XFramework.Draw.GraphicsMono.AddGraphics(System.Action)">
             <summary>
             添加一个绘制方法
             </summary>
             <param name="action"></param>
         </member>
-        <member name="M:XFramework.GraphicsMono.RemoveGraphics(XFramework.IDraw)">
+        <member name="M:XFramework.Draw.GraphicsMono.RemoveGraphics(XFramework.Draw.IDraw)">
             <summary>
             移除一个绘制者
             </summary>
             <param name="paniter"></param>
         </member>
-        <member name="M:XFramework.GraphicsMono.RemoveGraphics(System.Action)">
+        <member name="M:XFramework.Draw.GraphicsMono.RemoveGraphics(System.Action)">
             <summary>
             移除一个绘制方法
             </summary>
             <param name="action"></param>
         </member>
-        <member name="M:XFramework.GraphicsMono.Clear">
+        <member name="M:XFramework.Draw.GraphicsMono.Clear">
             <summary>
             清楚所有绘制
             </summary>
         </member>
-        <member name="M:XFramework.GraphicsMono.SetActive(System.Boolean)">
+        <member name="M:XFramework.Draw.GraphicsMono.SetActive(System.Boolean)">
             <summary>
             设置状态
             </summary>
@@ -739,9 +813,105 @@
             关闭模块
             </summary> 
         </member>
-        <member name="T:XFramework.MessengerManager">
+        <member name="T:XFramework.Event.EventArgs">
+            <summary>
+            事件参数
+            </summary>
+        </member>
+        <member name="T:XFramework.Event.EventDispatcher">
+            <summary>
+            事件分发处理类
+            这是个基类
+            </summary>
+        </member>
+        <member name="M:XFramework.Event.EventDispatcher.DispatchEvent(XFramework.Event.EventDispatchType,System.Object)">
+            <summary>
+            分发消息
+            </summary>    
+            <param name="eventType"></param>
+            <param name="data"></param>
+        </member>
+        <member name="M:XFramework.Event.EventDispatcher.RegistEvent(System.Action{System.Object,XFramework.Event.EventArgs})">
+            <summary>
+            注册监听
+            </summary>
+        </member>
+        <member name="M:XFramework.Event.EventDispatcher.UnRegistEvent(System.Action{System.Object,XFramework.Event.EventArgs})">
+            <summary>
+            注销监听
+            </summary>
+        </member>
+        <member name="T:XFramework.Event.EventDispatchType">
+            <summary>
+            事件分发类型
+            </summary>
+        </member>
+        <member name="T:XFramework.Event.MessengerManager">
             <summary>
             消息类 全局类消息
+            </summary>
+        </member>
+        <member name="T:XFramework.Event.BaseData">
+            <summary>
+            观察者数据基类
+            </summary>
+        </member>
+        <member name="P:XFramework.Event.BaseData.dataType">
+            <summary>
+            这个在派生类中要重写，返回对应的类型
+            </summary>
+        </member>
+        <member name="T:XFramework.Event.DataSubjectManager">
+            <summary>
+            数据主题管理类
+            </summary>
+        </member>
+        <member name="T:XFramework.Event.DataSubjectManager.Subject">
+            <summary>
+            每一个Subject都是一个被观察的对象
+            </summary>
+        </member>
+        <member name="F:XFramework.Event.DataSubjectManager.m_SubjectDic">
+            <summary>
+            存储数据类型和对应主题的字典
+            </summary>
+        </member>
+        <member name="M:XFramework.Event.DataSubjectManager.AddListener(System.Enum,XFramework.Event.IObserver)">
+            <summary>
+            增加数据监听
+            </summary>
+            <param name="dataType">数据类型</param>
+            <param name="observer">监听这个数据的观察者</param>
+        </member>
+        <member name="M:XFramework.Event.DataSubjectManager.RemoverListener(System.Enum,XFramework.Event.IObserver)">
+            <summary>
+            删除数据监听
+            </summary>
+            <param name="dataType">数据类型</param>
+            <param name="observer">监听这个数据的观察者</param>
+        </member>
+        <member name="M:XFramework.Event.DataSubjectManager.Notify(XFramework.Event.BaseData,System.Int32,System.Object)">
+            <summary>
+            通知事件
+            </summary>
+            <param name="data">data主题</param>
+            <param name="type">事件类型</param>
+            <param name="obj">映射参数</param>
+        </member>
+        <member name="M:XFramework.Event.ObservableSubjectTemplate`3.Attach(System.Action{`0,`1,`2})">
+            <summary>
+            添加
+            </summary>
+        </member>
+        <member name="M:XFramework.Event.ObservableSubjectTemplate`3.Detach(System.Action{`0,`1,`2})">
+            <summary>
+            移除
+            </summary>
+            <param name="observer"></param>
+        </member>
+        <member name="M:XFramework.Event.ObservableSubjectTemplate`3.Notify(`0,`1,`2)">
+            <summary>
+            通知
             </summary>
         </member>
         <member name="T:XFramework.Net.Connection">
@@ -875,148 +1045,6 @@
             <param name="eventType"></param>
             <param name="callBack"></param>
         </member>
-        <member name="T:XFramework.BaseData">
-            <summary>
-            观察者数据基类
-            </summary>
-        </member>
-        <member name="P:XFramework.BaseData.dataType">
-            <summary>
-            这个在派生类中要重写，返回对应的类型
-            </summary>
-        </member>
-        <member name="T:XFramework.DataSubjectManager">
-            <summary>
-            数据主题管理类
-            </summary>
-        </member>
-        <member name="T:XFramework.DataSubjectManager.Subject">
-            <summary>
-            每一个Subject都是一个被观察的对象
-            </summary>
-        </member>
-        <member name="F:XFramework.DataSubjectManager.m_SubjectDic">
-            <summary>
-            存储数据类型和对应主题的字典
-            </summary>
-        </member>
-        <member name="M:XFramework.DataSubjectManager.AddListener(System.Enum,XFramework.IObserver)">
-            <summary>
-            增加数据监听
-            </summary>
-            <param name="dataType">数据类型</param>
-            <param name="observer">监听这个数据的观察者</param>
-        </member>
-        <member name="M:XFramework.DataSubjectManager.RemoverListener(System.Enum,XFramework.IObserver)">
-            <summary>
-            删除数据监听
-            </summary>
-            <param name="dataType">数据类型</param>
-            <param name="observer">监听这个数据的观察者</param>
-        </member>
-        <member name="M:XFramework.DataSubjectManager.Notify(XFramework.BaseData,System.Int32,System.Object)">
-            <summary>
-            通知事件
-            </summary>
-            <param name="data">data主题</param>
-            <param name="type">事件类型</param>
-            <param name="obj">映射参数</param>
-        </member>
-        <member name="M:XFramework.ObservableSubjectTemplate`3.Attach(System.Action{`0,`1,`2})">
-            <summary>
-            添加
-            </summary>
-        </member>
-        <member name="M:XFramework.ObservableSubjectTemplate`3.Detach(System.Action{`0,`1,`2})">
-            <summary>
-            移除
-            </summary>
-            <param name="observer"></param>
-        </member>
-        <member name="M:XFramework.ObservableSubjectTemplate`3.Notify(`0,`1,`2)">
-            <summary>
-            通知
-            </summary>
-        </member>
-        <member name="T:XFramework.Pool.GameObjectPool">
-            <summary>
-            对象池
-            </summary>
-        </member>
-        <member name="F:XFramework.Pool.GameObjectPool.poolRoot">
-            <summary>
-            所有对象池的父物体
-            </summary>
-        </member>
-        <member name="F:XFramework.Pool.GameObjectPool.objParent">
-            <summary>
-            当前对象池的父物体
-            </summary>
-        </member>
-        <member name="F:XFramework.Pool.GameObjectPool.template">
-            <summary>
-            对象池模板
-            </summary>
-        </member>
-        <member name="F:XFramework.Pool.GameObjectPool.pooledObjects">
-            <summary>
-            对象池链表
-            </summary>
-        </member>
-        <member name="F:XFramework.Pool.GameObjectPool.currentIndex">
-            <summary>
-            当前指向链表位置索引
-            </summary>
-        </member>
-        <member name="M:XFramework.Pool.GameObjectPool.#ctor(UnityEngine.GameObject,System.Int32,System.Int32)">
-            <summary>
-            构造函数
-            </summary>
-            <param name="_template"></param>
-            <param name="_initCount"></param>
-            <param name="_lookPoolSize"></param>
-        </member>
-        <member name="M:XFramework.Pool.GameObjectPool.Clear">
-            <summary>
-            将对象池的数量回归5
-            </summary>
-        </member>
-        <member name="M:XFramework.Pool.GameObjectPool.Allocate">
-            <summary>
-            获取对象池中可以使用的对象。
-            </summary>
-        </member>
-        <member name="M:XFramework.Pool.GameObjectPool.Recycle(XFramework.Pool.GameObjectPoolable)">
-            <summary>
-            回收
-            </summary>
-        </member>
-        <member name="M:XFramework.Pool.GameObjectPool.Create(UnityEngine.GameObject,System.Boolean)">
-            <summary>
-            为对象池新增一个对象
-            </summary>
-        </member>
-        <member name="F:XFramework.Pool.GameObjectPoolManager.poolDic">
-            <summary>
-            利用GameObject的int型Hash值，索引对应的Pool对象
-            </summary>
-        </member>
-        <member name="P:XFramework.Pool.GameObjectPoolManager.PoolTemplateDic">
-            <summary>
-            所有模型字典
-            </summary>
-        </member>
-        <member name="M:XFramework.Pool.GameObjectPoolManager.CreatPool(UnityEngine.GameObject)">
-            <summary>
-            创建一个对象池
-            </summary>
-            <param name="template"></param>
-        </member>
-        <member name="M:XFramework.Pool.GameObjectPoolManager.Instantiate(System.String,UnityEngine.Vector3,UnityEngine.Quaternion)">
-            <summary>
-            通过名字实例化gameobj方法
-            </summary>
-        </member>
         <member name="T:XFramework.Pool.IPoolable">
             <summary>
             用于泛型约束，要实现SafeObjectPool的类必须继承这个接口
@@ -1035,16 +1063,6 @@
         <member name="M:XFramework.Pool.IPoolable.OnRecycled">
             <summary>
             回收事件
-            </summary>
-        </member>
-        <member name="T:XFramework.Pool.DefultObjectFactory`1">
-            <summary>
-            一个new出对象的工厂
-            </summary>
-        </member>
-        <member name="T:XFramework.Pool.IObjectFactory`1">
-            <summary>
-            对象工厂
             </summary>
         </member>
         <member name="T:XFramework.Pool.ObjectPoolManager">
@@ -1194,6 +1212,85 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:XFramework.Resource.AssetBundleLoadHelper">
+            <summary>
+            AB包加载助手
+            </summary>
+        </member>
+        <member name="F:XFramework.Resource.AssetBundleLoadHelper.m_ABDic">
+            <summary>
+            AB包的缓存
+            </summary>
+        </member>
+        <member name="F:XFramework.Resource.AssetBundleLoadHelper.dependenceInfo">
+            <summary>
+            用于获取AB包的依赖关系
+            </summary>
+        </member>
+        <member name="M:XFramework.Resource.AssetBundleLoadHelper.GetAssetBundle(System.String)">
+            <summary>
+            获取一个AB包文件
+            </summary>
+            <param name="path">相对路径</param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Resource.AssetBundleLoadHelper.GetAssetBundleAsync(System.String,System.Action{UnityEngine.AssetBundle})">
+            <summary>
+            异步获取AB包
+            </summary>
+            <param name="path"></param>
+        </member>
+        <member name="M:XFramework.Resource.AssetBundleLoadHelper.UnLoad(System.String,System.Boolean)">
+            <summary>
+            卸载AB包
+            </summary>
+            <param name="path"></param>
+            <param name="unLoadAllObjects"></param>
+        </member>
+        <member name="F:XFramework.Resource.SingleDepenciesData.Name">
+            <summary>
+            AB包名
+            </summary>
+        </member>
+        <member name="F:XFramework.Resource.SingleDepenciesData.Dependencies">
+            <summary>
+            直接依赖包
+            </summary>
+        </member>
+        <member name="T:XFramework.Resource.ResourceManager">
+            <summary>
+            资源管理器
+            </summary>
+        </member>
+        <member name="F:XFramework.Resource.ResourceManager.m_ResMode">
+            <summary>
+            资源加载方式
+            </summary>
+        </member>
+        <member name="M:XFramework.Resource.ResourceManager.Load``1(System.String)">
+            <summary>
+            同步加载资源
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="assetName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Resource.ResourceManager.LoadAll``1(System.String)">
+            <summary>
+            加载一个路径下的所有资源
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="path"></param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Resource.ResourceManager.LoadAsync``1(System.String,System.Action{``0})">
+            <summary>
+            异步加载资源
+            </summary>
+            <param name="assetName"></param>
+            <param name="name"></param>
+            <param name="callBack"></param>
+        </member>
         <member name="F:XFramework.SoundManager.m_BGM">
             <summary>
             背景音乐
@@ -1240,27 +1337,6 @@
             任务完成前每帧执行
             </summary>
         </member>
-        <member name="M:XFramework.Tasks.BaseTask.All(XFramework.Tasks.ITask[])">
-            <summary>
-            创建一个所有任务执行完才会继续执行下一个任务的队列任务
-            </summary>
-            <param name="tasks"></param>
-            <returns></returns>
-        </member>
-        <member name="M:XFramework.Tasks.BaseTask.Race(XFramework.Tasks.ITask[])">
-            <summary>
-            创建一个任一任务执行完就会继续执行下一个任务的队列任务
-            </summary>
-            <param name="tasks"></param>
-            <returns></returns>
-        </member>
-        <member name="M:XFramework.Tasks.BaseTask.Then(XFramework.Tasks.ITask)">
-            <summary>
-            创建一个后续任务
-            </summary>
-            <param name="task"></param>
-            <returns></returns>
-        </member>
         <member name="T:XFramework.Tasks.SingleTask">
             <summary>
             单个任务
@@ -1285,6 +1361,27 @@
             <summary>
             任务组
             </summary>
+        </member>
+        <member name="M:XFramework.Tasks.TaskExten.All(XFramework.Tasks.ITask,XFramework.Tasks.ITask[])">
+            <summary>
+            创建一个所有任务执行完才会继续执行下一个任务的队列任务
+            </summary>
+            <param name="tasks"></param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Tasks.TaskExten.Race(XFramework.Tasks.ITask,XFramework.Tasks.ITask[])">
+            <summary>
+            创建一个任一任务执行完就会继续执行下一个任务的队列任务
+            </summary>
+            <param name="tasks"></param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Tasks.TaskExten.Then(XFramework.Tasks.ITask,XFramework.Tasks.ITask)">
+            <summary>
+            创建一个后续任务
+            </summary>
+            <param name="nextTask"></param>
+            <returns></returns>
         </member>
         <member name="T:XFramework.Tasks.TaskManager">
             <summary>
@@ -1357,7 +1454,7 @@
             初始化UI组件
             </summary>
         </member>
-        <member name="M:XFramework.UI.BasePanel.OnOpen">
+        <member name="M:XFramework.UI.BasePanel.OnOpen(System.Object)">
             <summary>
             界面显示
             </summary>
@@ -1436,6 +1533,11 @@
             <summary>
             长按最大时间，超过后系数为1
             单位 秒
+            </summary>
+        </member>
+        <member name="T:XFramework.UI.Selectable">
+            <summary>
+            可左键触发的UI
             </summary>
         </member>
         <member name="T:XFramework.UI.Tree">
@@ -1617,6 +1719,11 @@
             实体模板
             </summary>
         </member>
+        <member name="F:XFramework.UI.GULayoutGroup.m_EntityPool">
+            <summary>
+            实体池
+            </summary>
+        </member>
         <member name="F:XFramework.UI.GULayoutGroup.onEntityRecycle">
             <summary>
             实体回收事件
@@ -1630,11 +1737,6 @@
         <member name="F:XFramework.UI.GULayoutGroup.onEntityAdd">
             <summary>
             实体添加事件
-            </summary>
-        </member>
-        <member name="M:XFramework.UI.GULayoutGroup.Start">
-            <summary>
-            内容模板
             </summary>
         </member>
         <member name="M:XFramework.UI.GULayoutGroup.AddEntity">
@@ -1658,10 +1760,16 @@
             配置实体数量
             </summary>
         </member>
+        <member name="M:XFramework.UI.GULayoutGroup.GetEntity">
+            <summary>
+            获取一个实体并返回
+            </summary>
+        </member>
         <member name="M:XFramework.UI.GULayoutGroup.CreateEntity">
             <summary>
-            创建一个实体并返回，后期改为从对象池中获取
+            新创建一个实体并返回
             </summary>
+            <returns></returns>
         </member>
         <member name="M:XFramework.UI.GULayoutGroup.Clear">
             <summary>
@@ -1679,7 +1787,7 @@
             UI管理器接口
             </summary>
         </member>
-        <member name="M:XFramework.UI.IUIManager.OpenPanel(System.String)">
+        <member name="M:XFramework.UI.IUIManager.OpenPanel(System.String,System.Object)">
             <summary>
             打开面板
             </summary>
@@ -1719,7 +1827,7 @@
             处于打开状态的面板字典，key为层级
             </summary>
         </member>
-        <member name="M:XFramework.UI.UIMgrDicType.OpenPanel(System.String)">
+        <member name="M:XFramework.UI.UIMgrDicType.OpenPanel(System.String,System.Object)">
             <summary>
             打开面板
             </summary>
@@ -1769,7 +1877,7 @@
             存储面板的栈
             </summary>
         </member>
-        <member name="M:XFramework.UI.UIMgrStackType.PushPanel(System.String)">
+        <member name="M:XFramework.UI.UIMgrStackType.PushPanel(System.String,System.Object)">
             <summary>
             把某个页面入栈，  把某个页面显示在界面上
             </summary>
@@ -2164,101 +2272,98 @@
             鼠标落在面板上的位置和面板位置差
             </summary>
         </member>
-        <member name="T:XFramework.DrawTriangles">
+        <member name="T:XFramework.Mathematics.Math2d">
             <summary>
-            封装所有画三角形的方法
+            和2d数学相关的算法
             </summary>
         </member>
-        <member name="M:XFramework.DrawTriangles.DrawCylinder(UnityEngine.Vector3[],System.Single,UnityEngine.MeshFilter,UnityEngine.LineRenderer[],UnityEngine.Color)">
+        <member name="M:XFramework.Mathematics.Math2d.SegmentIntersection(UnityEngine.Vector2@,UnityEngine.Vector2,UnityEngine.Vector2,UnityEngine.Vector2,UnityEngine.Vector2)">
             <summary>
-            圆柱空域
+            判断两线段的是否相交
             </summary>
-        </member>
-        <member name="M:XFramework.DrawTriangles.DrawWithPointsDifferent(UnityEngine.Vector3[],System.Single,UnityEngine.MeshFilter,UnityEngine.MeshFilter,UnityEngine.Material,UnityEngine.Material)">
-            <summary>
-            通过两个mesh控制侧面和底面材质不同时(多边形空域)
-            </summary>
-        </member>
-        <member name="M:XFramework.DrawTriangles.DrawPolygon(UnityEngine.Vector3[],System.Single,UnityEngine.MeshFilter,UnityEngine.LineRenderer[],UnityEngine.Color)">
-            <summary>
-            凹多边形空域
-            </summary>
-            <param name="positions"></param>
-            <param name="height"></param>
-            <param name="meshFilter"></param>
-        </member>
-        <member name="M:XFramework.DrawTriangles.DrawPolygon(UnityEngine.Vector3[],UnityEngine.MeshFilter,UnityEngine.LineRenderer[],UnityEngine.Color)">
-            <summary>
-            凹多边形空域 每个点高度不一样时 可以用来画扇形区域
-            </summary>
-            <param name="positions"></param>
-            <param name="meshFilter"></param>
-            <param name="lineRenderers"></param>
-        </member>
-        <member name="M:XFramework.DrawTriangles.DrawAirCorridorSpace(UnityEngine.Vector3[],UnityEngine.MeshFilter,UnityEngine.LineRenderer[],UnityEngine.Color)">
-            <summary>
-            Resion 1.0 空中走廊
-            </summary>
-            <param name="positions">空中走廊所有顶点</param>
-        </member>
-        <member name="M:XFramework.DrawTriangles.GetAirSpaceWithSector(System.Collections.Generic.List{UnityEngine.Vector3},System.Single,System.Single,System.Int32,UnityEngine.MeshFilter)">
-            <summary>
-            Resion 2.0 带弧形的空中走廊
-            </summary>
-            <param name="_bottomList">下底面排序</param>
-            <param name="_width">宽度</param>
-            <param name="_height">高度</param>
-            <param name="_squareCount">弧边数量</param>
+            <param name="intersection">交点</param>
+            <param name="point_0"></param>
+            <param name="point_1"></param>
+            <param name="point_2"></param>
+            <param name="point_3"></param>
             <returns></returns>
         </member>
-        <member name="M:XFramework.DrawTriangles.DrawHemisphere(UnityEngine.Vector3,System.Single,UnityEngine.MeshFilter,System.Int32)">
+        <member name="F:XFramework.Mathematics.Math2d.gaussianCoreDic">
             <summary>
-            半球防空区域
-            </summary>
-            <param name="pos"></param>
-            <param name="radius"></param>
-            <param name="angle">默认为半球，通过修改角度可以修改球的缺省</param>
-            <param name="meshFilter"></param>
-        </member>
-        <member name="M:XFramework.DrawTriangles.DrawLine(UnityEngine.Vector3[],System.Single,UnityEngine.LineRenderer,UnityEngine.Color)">
-            <summary>
-            线条
-            </summary>
-            <param name="positions">位置点</param>
-            <param name="wide">宽度</param>
-        </member>
-        <member name="M:XFramework.DrawTriangles.DrawWithPoints(UnityEngine.Vector3[],System.Single,UnityEngine.MeshFilter,UnityEngine.LineRenderer[])">
-            <summary>
-            凸多边型空域
-            </summary>
-            <param name="positions">所有底面顶点集合</param>
-            <param name="height">按照高度从底面点向上的延伸顶面点</param>
-            <param name="meshFilter">需要画三角形的mesh</param>
-        </member>
-        <member name="M:XFramework.DrawTriangles.DrawWithPoints(XFramework.Vector3Extend[],UnityEngine.MeshFilter)">
-            <summary>
-            多边型空域(每个点对应的空域高度不同时)
-            </summary>
-            <param name="positionDatas">所有底面顶点集合</param>
-            <param name="meshFilter">需要画三角形的mesh</param>
-        </member>
-        <member name="M:XFramework.DrawTriangles.DrawWithPointsDifferent(UnityEngine.Vector3[],System.Single,UnityEngine.MeshFilter,UnityEngine.MeshRenderer,UnityEngine.Material)">
-            <summary>
-            通过修改一个mesh的子三角形数组材质控制侧面和底面材质不同时(多边形空域)
+            高斯核的静态存储
             </summary>
         </member>
-        <member name="M:XFramework.DrawTriangles.DrawPolygon(XFramework.Vector3Extend[],UnityEngine.MeshFilter)">
+        <member name="M:XFramework.Mathematics.Math2d.ZoomBilinearInterpAsync(System.Single[0:,0:],System.Int32,System.Int32)">
             <summary>
-            凹多边形空域 每个点高度不一样时 可以用来画扇形区域
+            双线性差值
             </summary>
-            <param name="positions"></param>
-            <param name="meshFilter"></param>
-            <param name="lineRenderers"></param>
+            <param name="array_In"></param>
+            <param name="newWidth"></param>
+            <param name="newHeight"></param>
+            <returns></returns>
         </member>
-        <member name="T:XFramework.Vector3Extend">
+        <member name="M:XFramework.Mathematics.Math2d.BilinearInterp(System.Single[0:,0:],System.Int32,System.Int32)">
             <summary>
-            带二重高度Vector3
+            双线性差值
             </summary>
+            <param name="array"></param>
+            <param name="length_0"></param>
+            <param name="length_1"></param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.Math2d.GaussianBlurAsync(System.Single[0:,0:],System.Single,System.Int32,System.Boolean)">
+            <summary>
+            对二维数组做高斯模糊
+            </summary>
+            <param name="array">要处理的数组</param>
+            <param name="dev"></param>
+            <param name="r">高斯核扩展半径</param>
+            <param name="isCircle">改变形状是否是圆</param>
+        </member>
+        <member name="M:XFramework.Mathematics.Math2d.GaussianBlur(System.Single[0:,0:],System.Single,System.Int32,System.Boolean)">
+            <summary>
+            对二维数组做高斯模糊
+            </summary>
+            <param name="array">要处理的数组</param>
+            <param name="dev"></param>
+            <param name="r">高斯核扩展半径</param>
+            <param name="isCircle">改变形状是否是圆</param>
+        </member>
+        <member name="M:XFramework.Mathematics.Math2d.ParabolaGetHeight(System.Single,System.Single,System.Single)">
+            <summary>
+            求抛物线上某点的高度
+            </summary>
+            <param name="angle">角度</param>
+            <param name="v">速度</param>
+            <param name="x">x轴的量</param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.Math2d.ParabolaGetMaxDis(System.Single,System.Single)">
+            <summary>
+            根据俯仰角和速度求最远距离
+            </summary>
+        </member>
+        <member name="M:XFramework.Mathematics.Math2d.ParabolaGetAngle(UnityEngine.Vector3,UnityEngine.Vector3,System.Single)">
+            <summary>
+            通过起始点和速度反推俯仰角
+            </summary>
+        </member>
+        <member name="M:XFramework.Mathematics.Math2d.ParabolaGetDis(System.Single,System.Single,System.Single)">
+            <summary>
+            求给定高度的距离的较大值
+            </summary>
+            <param name="v">速度</param>
+            <param name="angle">角度</param>
+            <param name="height">竖直方向上的高度</param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.Math2d.IsPointInsidePolygon(UnityEngine.Vector2,UnityEngine.Vector2[],System.Boolean)">
+            <summary>
+            判断点是否在多边形区域内
+            </summary>
+            <param name="p">待判断的点，格式：{ x: X坐标, y: Y坐标 }</param>
+            <param name="poly">多边形顶点，数组成员的格式同</param>
+            <returns>true:在多边形内，凹点   false：在多边形外，凸点</returns>
         </member>
         <member name="T:XFramework.Mathematics.Math3d">
             <summary>
@@ -2455,9 +2560,423 @@
             表示一个平面
             </summary>
         </member>
+        <member name="T:XFramework.Mathematics.PhysicsMath">
+            <summary>
+            所有物理数学相关计算方法
+            </summary>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.Less(System.Single,System.Single)">
+            <summary>
+            判断a是否小于b
+            </summary>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.Great(System.Single,System.Single)">
+            <summary>
+            判断a是否大于b
+            </summary>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.FloatEqual(System.Single,System.Single)">
+            <summary>
+            判断a是否等于b
+            </summary>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.Vector3Equal(UnityEngine.Vector3,UnityEngine.Vector3)">
+            <summary>
+            判断a是否等于b
+            </summary>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.GetSqrtOfMath(System.Single,System.Single,System.Single)">
+            <summary>
+            获取平方根 一元二次方程求根公式 x = (-b+(b^2-4ac)^1/2)/2a
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <param name="d"></param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.GetTargetVector(UnityEngine.Vector2,System.Single)">
+            <summary>
+            获取平面向量向右旋转theta后的目标向量
+            </summary>
+            <param name="startVector"></param>
+            <param name="theta"></param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.GetTargetVector(UnityEngine.Vector3,UnityEngine.Vector3,System.Single)">
+            <summary>
+            获取三维空间向量绕已知轴旋转θ角后的得到的向量
+            </summary>
+            <param name="startVector">待旋转向量</param>
+            <param name="n">旋转轴</param>
+            <param name="theta">旋转角度(弧度)</param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.CheckVector(System.Collections.Generic.List{UnityEngine.Vector3})">
+            <summary>
+            检查所给点集是否为顺时针排序(向量叉乘的法线朝向)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.CheckVector(System.Collections.Generic.List{UnityEngine.Vector3},System.Collections.Generic.List{UnityEngine.Vector3}@)">
+            <summary>
+            检查所给点集是否为顺时针排序(向量叉乘的法线朝向)
+            </summary>
+            <param name="points"></param>
+            <param name="outPoints"></param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.GetSectorOutPoint(UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3)">
+            <summary>
+            获取扇形弧边中点
+            </summary>
+            <param name="origin"></param>
+            <param name="leftPoint"></param>
+            <param name="rightPoint"></param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.GetBernoulli(System.Int32,System.Single,System.Single)">
+            <summary>
+            y为0的伯努利方程
+            </summary>
+            <param name="a"></param>
+            <param name="radian">弧度</param>
+            <param name="y"></param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.GetRangeArray(System.Int32[],System.Int32,System.Int32)">
+            <summary>
+            从一个数组中取固定位置子数组
+            </summary>
+            <param name="SourceArray"> 原始数组 </param>
+            <param name="StartIndex"> 起始位置 </param>
+            <param name="EndIndex"> 终止位置 </param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.GetIntersectionPoint(UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3)">
+             <summary>
+            求两直线的交点坐标
+            给定两个点P1和P2，直线上的点为P
+            参数方程：
+               P＝ P1 ＋ t*(P2-P1）
+            展开就是
+               p.x = p1.x + t*(p2.x-p1.x)
+               p.y = p1.y + t*(p2.y-p1.y)
+               p.z = p1.z + t*(p2.z-p1.z)
+            这种写法就比用等式的好，因为不存在分母为0的问题
+             </summary>
+             <param name="pn1">L1上的点</param>
+             <param name="pn2">L1上的点</param>
+             <param name="pn3">L2上的点</param>
+             <param name="pn4">L2上的点</param>
+             <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.GetHorizontalDir(UnityEngine.Vector3,UnityEngine.Vector3)">
+            <summary>
+            获取两点间向右的水平垂直向量，忽略Y轴
+            </summary>
+            <param name="_start"> 起始点 </param>
+            <param name="_end"> 终止点 </param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.GetVerticalDir(UnityEngine.Vector3,UnityEngine.Vector3)">
+            <summary>
+            获取两点间向上的竖直垂直向量
+            </summary>
+            <param name="_start"> 起始点 </param>
+            <param name="_end"> 终止点 </param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.GetRect(UnityEngine.Vector3,UnityEngine.Vector3,System.Single)">
+            <summary>
+            获取两点组成的矩形边框
+            </summary>
+            <param name="_start">起始点</param>
+            <param name="_end">终止点</param>
+            <param name="_width">宽度</param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.GetBezierList(UnityEngine.Vector3[],System.Int32)">
+            <summary>
+            获取贝塞尔曲线(3个点为二次,4个点为三次,其他返回空)
+            </summary>
+            <param name="_points">控制点集</param>
+            <param name="_count">曲线段数</param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.GetBezierPoint(System.Single,UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3)">
+            <summary>
+            获取二次贝塞尔曲线上点
+            </summary>
+            <param name="_t">间隔</param>
+            <param name="_P0">起始点</param>
+            <param name="_P1">控制点</param>
+            <param name="_P2">末尾点</param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.GetBezierPoint(System.Single,UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3)">
+            <summary>
+            获取三次贝塞尔曲线上点
+            </summary>
+            <param name="_t">间隔</param>
+            <param name="_P0">起始点</param>
+            <param name="_P1">控制点1</param>
+            <param name="_P2">控制点2</param>
+            <param name="_P3">末尾点</param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.GetPoints(System.Collections.Generic.List{UnityEngine.Vector3})">
+            <summary>         
+            获取曲线上面的所有路径点
+            </summary> 
+            <returns>The list.</returns> 
+            <param name="wayPoints">路点列表</param> 
+            <param name="pointSize">两个点之间的节点数量</param> 
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.PathControlPointGenerator(UnityEngine.Vector3[])">
+            <summary> 
+            获取控制点 
+            </summary> 
+            <returns>The control point generator.</returns> 
+            <param name="path">Path.</param> 
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.Interp(UnityEngine.Vector3[],System.Single)">
+            <summary> 
+            根据 T 获取曲线上面的点位置 ，
+            插值函数，
+            Hermit曲线方程
+            </summary> 
+            <param name="pts">控制点点集</param> 
+            <param name="t">分割进度</param> 
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.GetCirclePoints(UnityEngine.Vector3,System.Single,System.Int32)">
+            <summary>
+            获取半径为r的圆的点坐标集合
+            </summary>
+            <param name="origin"> 圆心 </param>
+            <param name="radius"> 半径 </param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.GetEllipsePoints(System.Single,System.Single,UnityEngine.Vector3,System.Int32)">
+            <summary>
+            获取椭圆上的点
+            </summary>
+            <param name="_r">短轴</param>
+            <param name="_R">长轴</param>
+            <param name="_origin">中点</param>
+            <param name="seg">间隔</param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.GetSectorPoints_1(UnityEngine.Vector3,UnityEngine.Vector3,System.Single)">
+            <summary>
+            获取扇形区域的点集合（包括圆心点）
+            </summary>
+            <param name="origin">圆心点</param>
+            <param name="egdePoint">扇形弧边右边缘点</param>
+            <param name="angleDiffer">x，z轴张角</param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.GetSectorPoints_2(UnityEngine.Vector3,UnityEngine.Vector3,System.Single,System.Single)">
+            <summary>
+            获取扇形区域的点集合（包括圆心点）没有地平线以下的区域
+            </summary>
+            <param name="origin">圆心点</param>
+            <param name="tarPoint"></param>
+            <param name="alpha">x,z轴张角</param>
+            <param name="theta">x,y轴张角</param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.IsFragementIndex(System.Collections.Generic.List{UnityEngine.Vector3},System.Int32,System.Boolean)">
+            <summary>
+            以index点和前后两个点构造一个三角形,判断点集内的其余点是否全部在这个三角形外部
+            </summary>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.IsPointInsidePolygon(UnityEngine.Vector3,System.Collections.Generic.List{UnityEngine.Vector3},System.Boolean)">
+            <summary>
+            判断点是否在多边形区域内
+            </summary>
+            <param name="p">待判断的点，格式：{ x: X坐标, y: Y坐标 }</param>
+            <param name="poly">多边形顶点，数组成员的格式同</param>
+            <returns>true:在多边形内，凹点   false：在多边形外，凸点</returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.IsPointInsidePolygon(UnityEngine.Vector3,System.Collections.Generic.List{UnityEngine.Vector3})">
+            <summary>
+            判断点是否在多边形区域内
+            </summary>
+            <param name="point"> 待判断的点 </param>
+            <param name="mPoints"> 多边形 </param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.IsPointInsidePolygon(UnityEngine.Vector3,System.Collections.Generic.List{UnityEngine.Vector3},System.Collections.Generic.List{UnityEngine.Vector3}@)">
+            <summary>
+            判断点是否在多边形区域内
+            </summary>
+            <param name="point"> 待判断的点 </param>
+            <param name="mPoints"> 多边形 </param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.GetPointsInTriangle(System.Collections.Generic.List{UnityEngine.Vector3})">
+            <summary>
+            返回三角形的内部(整数)顶点
+            </summary>
+            <param name="trianglePoints">三角形的三个顶点</param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.GetPointsInTriangle(UnityEngine.Vector3[],System.Single,System.Single)">
+            <summary>
+            通过给定网格间隔，获取三角形内部的网格点
+            </summary>
+            <param name="trianglePoints">三角形顶点</param>
+            <param name="pieceX">X的间隔</param>
+            <param name="pieceZ">Z的间隔</param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.GetVertices(UnityEngine.Vector3,System.Single,System.Int32)">
+            <summary>
+            获取一个球面表面的所有点坐标集合
+            </summary>
+            <param name="fromPos">球心</param>
+            <param name="radius">半径</param>
+            <param name="angle"></param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.Sort3(System.Int32)">
+            <summary>
+            从上而下顺时针排列三角形顶点渲染顺序
+            </summary>
+            <param name="angle"></param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.GetAirCorridorSpace(System.Collections.Generic.List{UnityEngine.Vector3},System.Single,System.Single)">
+            <summary>
+            Resion 1.0 获取空中走廊所有顶点(按节数排列)
+            </summary>
+            侧面与地面垂直，连接处是角，连接处连接于底面平行
+            <param name="_list"> 路径点 </param>
+            <param name="_width"> 宽度 </param>
+            <param name="_height"> 高度 </param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.GetAirSpaceBottomPoints(System.Collections.Generic.List{UnityEngine.Vector3},System.Single,System.Single)">
+            <summary>
+            Resion 2.0 获取空中走廊下表面点集(顶角边)
+            </summary>
+            <param name="_list"> 路径点 </param>
+            <param name="_width"> 宽度 </param>
+            <param name="_height"> 高度 </param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.GetAirBottomSpaceWithSector(System.Collections.Generic.List{UnityEngine.Vector3},System.Single)">
+            <summary>
+            Resion 2.0 获取空中走廊下表面顶点(弧边)
+            </summary>
+            <param name="_bottomList"> 下表面点集 </param>
+            <param name="_width"> 宽度 </param>
+            <param name="_height"> 高度 </param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.ComputePolygonArea(System.Collections.Generic.List{UnityEngine.Vector3})">
+            <summary>
+            计算多边形面积(忽略y轴)
+            </summary>
+            <param name="points"></param>
+            <returns>平方米</returns>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.LineLineIntersection(UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3)">
+            <summary>
+            计算线段是否相交
+            端点相交不算相交
+            </summary>
+        </member>
+        <member name="M:XFramework.Mathematics.PhysicsMath.IsApproximately(System.Double,System.Double,System.Double)">
+            <summary>
+            计算两个数字是否接近相等,阈值是dvalue
+            </summary>
+        </member>
         <member name="T:XFramework.ColorInt32">
             <summary>
             此类是为了解决传参类型为Color时不能设置默认值的问题
+            </summary>
+        </member>
+        <member name="F:XFramework.Timer._isRunning">
+            <summary>
+            是否执行
+            </summary>
+        </member>
+        <member name="F:XFramework.Timer._useTime">
+            <summary>
+            已执行时间（每次满足运行间隔就会加这个）
+            </summary>
+        </member>
+        <member name="P:XFramework.Timer.RunTime">
+            <summary>
+            运行时间
+            </summary>
+        </member>
+        <member name="P:XFramework.Timer.UseCount">
+            <summary>
+            已运行次数
+            </summary>
+        </member>
+        <member name="P:XFramework.Timer.TimeInterval">
+            <summary>
+            运行间隔
+            </summary>
+        </member>
+        <member name="P:XFramework.Timer.RepeatCount">
+            <summary>
+            设置的运行次数
+            </summary>
+        </member>
+        <member name="M:XFramework.Timer.#ctor(System.Single,System.Int32)">
+            <summary>
+            <param name="interval">时间间隔，单位是毫秒</param>
+            <param name="repeatCount">运行次数，一秒一次的话MaxValue可以执行68年</param>
+            </summary>
+        </member>
+        <member name="P:XFramework.Timer.IsRunning">
+            <summary>
+            是否运行中
+            </summary>
+        </member>
+        <member name="M:XFramework.Timer.Update(System.Single)">
+            <summary>
+            每帧执行
+            </summary>
+            <param name="deltaTime"></param>
+        </member>
+        <member name="M:XFramework.Timer.AddEventListener(System.Action)">
+            <summary>
+            添加事件
+            </summary>
+            <param name="type"></param>
+            <param name="fun"></param>
+        </member>
+        <member name="M:XFramework.Timer.RemoveEventListener(System.Action)">
+            <summary>
+            移除事件
+            </summary>
+            <param name="type"></param>
+            <param name="fun"></param>
+        </member>
+        <member name="M:XFramework.Timer.Start">
+            <summary>
+            开始(调用了IsRunning的Set,初始化了TimerManager)
+            </summary>
+        </member>
+        <member name="M:XFramework.Timer.Pause">
+            <summary>
+            停止
+            </summary>
+        </member>
+        <member name="M:XFramework.Timer.ReSet">
+            <summary>
+            重置
+            </summary>
+        </member>
+        <member name="T:XFramework.Timer.TimerManager">
+            <summary>
+            计时器管理
+            除了计时器以外其他类暂时不需要调用，以后需要再放到外面去
             </summary>
         </member>
         <member name="T:XFramework.ProtocolBytes">
@@ -2544,6 +3063,16 @@
             以后把System和UnityEngine的扩展分开
             </summary>
         </member>
+        <member name="M:XFramework.Extend.Take``1(System.Collections.Generic.IList{``0},System.Int32,System.Int32)">
+            <summary>
+            获取一个集合从start开始的length个
+            </summary>
+            <typeparam name="T">数组类型</typeparam>
+            <param name="value">目标</param>
+            <param name="start">开始索引</param>
+            <param name="length">目标长度</param>
+            <returns></returns>
+        </member>
         <member name="M:XFramework.Extend.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
             <summary>
             对枚举器的所以数据进行某种操作
@@ -2565,16 +3094,16 @@
             根据Key获取字典的一个值
             </summary>
         </member>
-        <member name="M:XFramework.Extend.Concat1``1(``0[0:,0:],``0[0:,0:])">
-            <summary>
-            连接两个数组的第一维返回一个新数组
-            </summary>
-            <typeparam name="T"></typeparam>
-        </member>
         <member name="M:XFramework.Extend.Concat0``1(``0[0:,0:],``0[0:,0:])">
             <summary>
-            连接两个数组的第二位返回一个新数组
+            拼接二维数组的第一维
             </summary>
+        </member>
+        <member name="M:XFramework.Extend.Concat1``1(``0[0:,0:],``0[0:,0:])">
+            <summary>
+            拼接二维数组的第二维
+            </summary>
+            <typeparam name="T"></typeparam>
         </member>
         <member name="M:XFramework.Extend.GetPart``1(``0[0:,0:],System.Int32,System.Int32,System.Int32,System.Int32)">
             <summary>
@@ -2661,6 +3190,36 @@
             找寻名字为name的子物体
             </summary>
         </member>
+        <member name="M:XFramework.Extend.GetChilds(UnityEngine.Transform)">
+            <summary>
+            获取Transform的所有子物体
+            </summary>
+        </member>
+        <member name="M:XFramework.Extend.GetChilds(UnityEngine.Transform,System.String)">
+            <summary>
+            获取Transform的所有 名为 _name 的 子物体
+            </summary>
+        </member>
+        <member name="M:XFramework.Extend.GetChildsObj(UnityEngine.Transform)">
+            <summary>
+            获取Transform的所有子物体的GameObject
+            </summary>
+        </member>
+        <member name="M:XFramework.Extend.SetX(UnityEngine.Transform,System.Single,XFramework.VectorType)">
+            <summary>
+            设置某个矢量x的值
+            </summary>
+        </member>
+        <member name="M:XFramework.Extend.SetY(UnityEngine.Transform,System.Single,XFramework.VectorType)">
+            <summary>
+            设置某个矢量y的值
+            </summary>
+        </member>
+        <member name="M:XFramework.Extend.SetZ(UnityEngine.Transform,System.Single,XFramework.VectorType)">
+            <summary>
+            设置某个矢量z的值
+            </summary>
+        </member>
         <member name="M:XFramework.Extend.ResetDynamics(UnityEngine.Rigidbody)">
             <summary>
             重置刚体
@@ -2675,41 +3234,6 @@
             <summary>
             将减去rotation并返回
             </summary>
-        </member>
-        <member name="M:XFramework.Extend.AddCotroledPanel(UnityEngine.UI.Toggle,UnityEngine.GameObject)">
-            <summary>
-            给Toggle添加受控制的物体
-            </summary>
-            <param name="toggle"></param>
-            <param name="panel"></param>
-        </member>
-        <member name="M:XFramework.Extend.Right(UnityEngine.Terrain)">
-            <summary>
-            右边的地形块
-            </summary>
-            <param name="terrain"></param>
-            <returns></returns>
-        </member>
-        <member name="M:XFramework.Extend.Top(UnityEngine.Terrain)">
-            <summary>
-            上边的地形块
-            </summary>
-            <param name="terrain"></param>
-            <returns></returns>
-        </member>
-        <member name="M:XFramework.Extend.Left(UnityEngine.Terrain)">
-            <summary>
-            左边的地形块
-            </summary>
-            <param name="terrain"></param>
-            <returns></returns>
-        </member>
-        <member name="M:XFramework.Extend.Bottom(UnityEngine.Terrain)">
-            <summary>
-            下边的地形块
-            </summary>
-            <param name="terrain"></param>
-            <returns></returns>
         </member>
         <member name="M:XFramework.Extend.Draw(UnityEngine.Bounds,UnityEngine.Color)">
             <summary>
@@ -2907,45 +3431,20 @@
             <param name="objs">参数数组</param>
             <returns></returns>
         </member>
+        <member name="M:XFramework.Utility.Reflection.GetSonClass(System.Type,System.String)">
+            <summary>
+            获取一个类型的所有派生类
+            </summary>
+            <param name="typeBase">基类型</param>
+            <param name="assemblyName">程序集</param>
+            <returns></returns>
+        </member>
         <member name="M:XFramework.Utility.Text.SplitPathName(System.String)">
             <summary>
             
             </summary>
             <param name="path"></param>
             <returns></returns>
-        </member>
-        <member name="T:EventArgs">
-            <summary>
-            事件参数
-            </summary>
-        </member>
-        <member name="T:EventDispatcher">
-            <summary>
-            事件分发处理类
-            这是个基类
-            </summary>
-        </member>
-        <member name="M:EventDispatcher.DispatchEvent(EventDispatchType,System.Object)">
-            <summary>
-            分发消息
-            </summary>    
-            <param name="eventType"></param>
-            <param name="data"></param>
-        </member>
-        <member name="M:EventDispatcher.RegistEvent(System.Action{System.Object,EventArgs})">
-            <summary>
-            注册监听
-            </summary>
-        </member>
-        <member name="M:EventDispatcher.UnRegistEvent(System.Action{System.Object,EventArgs})">
-            <summary>
-            注销监听
-            </summary>
-        </member>
-        <member name="T:EventDispatchType">
-            <summary>
-            事件分发类型
-            </summary>
         </member>
         <member name="T:Net.Common.ProtocolBytes">
             <summary>
@@ -3016,63 +3515,6 @@
             数据
             </summary>
         </member>
-        <member name="T:Math2d">
-            <summary>
-            和2d数学相关的算法
-            </summary>
-        </member>
-        <member name="M:Math2d.SegmentIntersection(UnityEngine.Vector2@,UnityEngine.Vector2,UnityEngine.Vector2,UnityEngine.Vector2,UnityEngine.Vector2)">
-            <summary>
-            判断两线段的是否相交
-            </summary>
-            <param name="intersection">交点</param>
-            <param name="point_0"></param>
-            <param name="point_1"></param>
-            <param name="point_2"></param>
-            <param name="point_3"></param>
-            <returns></returns>
-        </member>
-        <member name="F:Math2d.gaussianCoreDic">
-            <summary>
-            高斯核的静态存储
-            </summary>
-        </member>
-        <member name="M:Math2d.ZoomBilinearInterpAsync(System.Single[0:,0:],System.Int32,System.Int32)">
-            <summary>
-            双线性差值
-            </summary>
-            <param name="array_In"></param>
-            <param name="newWidth"></param>
-            <param name="newHeight"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Math2d.BilinearInterp(System.Single[0:,0:],System.Int32,System.Int32)">
-            <summary>
-            双线性差值
-            </summary>
-            <param name="array"></param>
-            <param name="length_0"></param>
-            <param name="length_1"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Math2d.GaussianBlurAsync(System.Single[0:,0:],System.Single,System.Int32,System.Boolean)">
-            <summary>
-            对二维数组做高斯模糊
-            </summary>
-            <param name="array">要处理的数组</param>
-            <param name="dev"></param>
-            <param name="r">高斯核扩展半径</param>
-            <param name="isCircle">改变形状是否是圆</param>
-        </member>
-        <member name="M:Math2d.GaussianBlur(System.Single[0:,0:],System.Single,System.Int32,System.Boolean)">
-            <summary>
-            对二维数组做高斯模糊
-            </summary>
-            <param name="array">要处理的数组</param>
-            <param name="dev"></param>
-            <param name="r">高斯核扩展半径</param>
-            <param name="isCircle">改变形状是否是圆</param>
-        </member>
         <member name="T:GameCoordinate">
             <summary>
             坐标系
@@ -3086,291 +3528,6 @@
         <member name="F:GameCoordinate.theta">
             <summary>
             和世界坐标系的夹角(y轴向x轴方向)
-            </summary>
-        </member>
-        <member name="T:SFramework.Mathematics.PhysicsMath">
-            <summary>
-            所有物理数学相关计算方法
-            </summary>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.GetTargetVector(UnityEngine.Vector2,System.Single)">
-            <summary>
-            获取平面向量向右旋转theta后的目标向量
-            </summary>
-            <param name="startVector"></param>
-            <param name="theta"></param>
-            <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.GetTargetVector(UnityEngine.Vector3,UnityEngine.Vector3,System.Single)">
-            <summary>
-            获取三维空间向量绕已知轴旋转θ角后的得到的向量
-            </summary>
-            <param name="startVector">待旋转向量</param>
-            <param name="n">旋转轴</param>
-            <param name="theta">旋转角度(弧度)</param>
-            <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.GetRangeArray(System.Int32[],System.Int32,System.Int32)">
-            <summary>
-            从一个数组中取固定位置子数组
-            </summary>
-            <param name="SourceArray"> 原始数组 </param>
-            <param name="StartIndex"> 起始位置 </param>
-            <param name="EndIndex"> 终止位置 </param>
-            <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.GetIntersectionPoint(UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3)">
-             <summary>
-            求两直线的交点坐标
-            给定两个点P1和P2，直线上的点为P
-            参数方程：
-               P＝ P1 ＋ t*(P2-P1）
-            展开就是
-               p.x = p1.x + t*(p2.x-p1.x)
-               p.y = p1.y + t*(p2.y-p1.y)
-               p.z = p1.z + t*(p2.z-p1.z)
-            这种写法就比用等式的好，因为不存在分母为0的问题
-             </summary>
-             <param name="pn1">L1上的点</param>
-             <param name="pn2">L1上的点</param>
-             <param name="pn3">L2上的点</param>
-             <param name="pn4">L2上的点</param>
-             <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.GetHorizontalDir(UnityEngine.Vector3,UnityEngine.Vector3)">
-            <summary>
-            获取两点间向右的水平垂直向量，忽略Y轴
-            </summary>
-            <param name="_start"> 起始点 </param>
-            <param name="_end"> 终止点 </param>
-            <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.GetVerticalDir(UnityEngine.Vector3,UnityEngine.Vector3)">
-            <summary>
-            获取两点间向上的竖直垂直向量
-            </summary>
-            <param name="_start"> 起始点 </param>
-            <param name="_end"> 终止点 </param>
-            <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.GetRect(UnityEngine.Vector3,UnityEngine.Vector3,System.Single)">
-            <summary>
-            获取两点组成的矩形边框
-            </summary>
-            <param name="_start">起始点</param>
-            <param name="_end">终止点</param>
-            <param name="_width">宽度</param>
-            <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.GetBezierList(UnityEngine.Vector3[],System.Int32)">
-            <summary>
-            获取贝塞尔曲线(3个点为二次,4个点为三次,其他返回空)
-            </summary>
-            <param name="_points">控制点集</param>
-            <param name="_count">曲线段数</param>
-            <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.GetBezierPoint(System.Single,UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3)">
-            <summary>
-            获取二次贝塞尔曲线上点
-            </summary>
-            <param name="_t">间隔</param>
-            <param name="_P0">起始点</param>
-            <param name="_P1">控制点</param>
-            <param name="_P2">末尾点</param>
-            <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.GetBezierPoint(System.Single,UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3)">
-            <summary>
-            获取三次贝塞尔曲线上点
-            </summary>
-            <param name="_t">间隔</param>
-            <param name="_P0">起始点</param>
-            <param name="_P1">控制点1</param>
-            <param name="_P2">控制点2</param>
-            <param name="_P3">末尾点</param>
-            <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.GetPoints(System.Collections.Generic.List{UnityEngine.Vector3})">
-            <summary>         
-            获取曲线上面的所有路径点
-            </summary> 
-            <returns>The list.</returns> 
-            <param name="wayPoints">路点列表</param> 
-            <param name="pointSize">两个点之间的节点数量</param> 
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.PathControlPointGenerator(UnityEngine.Vector3[])">
-            <summary> 
-            获取控制点 
-            </summary> 
-            <returns>The control point generator.</returns> 
-            <param name="path">Path.</param> 
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.Interp(UnityEngine.Vector3[],System.Single)">
-            <summary> 
-            根据 T 获取曲线上面的点位置 ，
-            插值函数，
-            Hermit曲线方程
-            </summary> 
-            <param name="pts">控制点点集</param> 
-            <param name="t">分割进度</param> 
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.GetCirclePoints(UnityEngine.Vector3,System.Single,System.Int32)">
-            <summary>
-            获取半径为r的圆的点坐标集合
-            </summary>
-            <param name="origin"> 圆心 </param>
-            <param name="radius"> 半径 </param>
-            <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.GetEllipsePoints(System.Single,System.Single,UnityEngine.Vector3,System.Int32)">
-            <summary>
-            获取椭圆上的点
-            </summary>
-            <param name="_r">短轴</param>
-            <param name="_R">长轴</param>
-            <param name="_origin">中点</param>
-            <param name="seg">间隔</param>
-            <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.GetSectorPoints_1(UnityEngine.Vector3,UnityEngine.Vector3,System.Single)">
-            <summary>
-            获取扇形区域的点集合（包括圆心点）
-            </summary>
-            <param name="origin">圆心点</param>
-            <param name="egdePoint">扇形弧边右边缘点</param>
-            <param name="angleDiffer">x，z轴张角</param>
-            <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.GetSectorPoints_2(UnityEngine.Vector3,UnityEngine.Vector3,System.Single,System.Single)">
-            <summary>
-            获取扇形区域的点集合（包括圆心点）没有地平线以下的区域
-            </summary>
-            <param name="origin">圆心点</param>
-            <param name="tarPoint"></param>
-            <param name="alpha">x,z轴张角</param>
-            <param name="theta">x,y轴张角</param>
-            <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.DrawPolygon(System.Collections.Generic.List{UnityEngine.Vector3},System.Boolean)">
-            <summary>
-            获取凹多边形平面排序
-            </summary>
-            <param name="points"> 关键点集合 </param>
-            <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.IsFragementIndex(System.Int32,System.Collections.Generic.List{UnityEngine.Vector3},System.Boolean)">
-            <summary>
-            是否是可划分顶点:新的多边形没有顶点在分割的三角形内
-            </summary>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.IsPointInsidePolygon(UnityEngine.Vector3,System.Collections.Generic.List{UnityEngine.Vector3},System.Boolean)">
-            <summary>
-            判断点是否在多边形区域内
-            </summary>
-            <param name="p">待判断的点，格式：{ x: X坐标, y: Y坐标 }</param>
-            <param name="poly">多边形顶点，数组成员的格式同</param>
-            <returns>true:在多边形内，凹点   false：在多边形外，凸点</returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.IsPointInsidePolygon001(UnityEngine.Vector3,System.Collections.Generic.List{UnityEngine.Vector3})">
-            <summary>
-            判断点是否在多边形区域内
-            </summary>
-            <param name="point"> 待判断的点 </param>
-            <param name="mPoints"> 多边形 </param>
-            <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.IsPointInsidePolygon001(UnityEngine.Vector3,System.Collections.Generic.List{UnityEngine.Vector3},System.Collections.Generic.List{UnityEngine.Vector3})">
-            <summary>
-            判断点是否在多边形区域内
-            </summary>
-            <param name="point"> 待判断的点 </param>
-            <param name="mPoints"> 多边形 </param>
-            <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.PolygonToTriangles(System.Collections.Generic.List{UnityEngine.Vector3})">
-            <summary>
-            将一个多边形转化为多个三角形
-            </summary>
-            <param name="points"></param>
-            <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.GetPointsInTriangle(System.Collections.Generic.List{UnityEngine.Vector3})">
-            <summary>
-            返回三角形的内部(整数)顶点
-            </summary>
-            <param name="trianglePoints">三角形的三个顶点</param>
-            <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.GetPointsInTriangle(UnityEngine.Vector3[],System.Single,System.Single)">
-            <summary>
-            通过给定网格间隔，获取三角形内部的网格点
-            </summary>
-            <param name="trianglePoints">三角形顶点</param>
-            <param name="pieceX">X的间隔</param>
-            <param name="pieceZ">Z的间隔</param>
-            <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.GetVertices(UnityEngine.Vector3,System.Single,System.Int32)">
-            <summary>
-            获取一个球面表面的所有点坐标集合
-            </summary>
-            <param name="fromPos">球心</param>
-            <param name="radius">半径</param>
-            <param name="angle"></param>
-            <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.Sort3(System.Int32)">
-            <summary>
-            从上而下顺时针排列三角形顶点渲染顺序
-            </summary>
-            <param name="angle"></param>
-            <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.GetAirCorridorSpace(System.Collections.Generic.List{UnityEngine.Vector3},System.Single,System.Single)">
-            <summary>
-            Resion 1.0 获取空中走廊所有顶点(按节数排列)
-            </summary>
-            侧面与地面垂直，连接处是角，连接处连接于底面平行
-            <param name="_list"> 路径点 </param>
-            <param name="_width"> 宽度 </param>
-            <param name="_height"> 高度 </param>
-            <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.GetAirSpaceBottomPoints(System.Collections.Generic.List{UnityEngine.Vector3},System.Single,System.Single)">
-            <summary>
-            Resion 2.0 获取空中走廊下表面点集(顶角边)
-            </summary>
-            <param name="_list"> 路径点 </param>
-            <param name="_width"> 宽度 </param>
-            <param name="_height"> 高度 </param>
-            <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.GetAirBottomSpaceWithSector(System.Collections.Generic.List{UnityEngine.Vector3},System.Single)">
-            <summary>
-            Resion 2.0 获取空中走廊下表面顶点(弧边)
-            </summary>
-            <param name="_bottomList"> 下表面点集 </param>
-            <param name="_width"> 宽度 </param>
-            <param name="_height"> 高度 </param>
-            <returns></returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.ComputePolygonArea(System.Collections.Generic.List{UnityEngine.Vector3})">
-            <summary>
-            计算多边形面积(忽略y轴)
-            </summary>
-            <param name="points"></param>
-            <returns>平方米</returns>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.LineLineIntersection(UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3)">
-            <summary>
-            计算线段是否相交
-            端点相交不算相交
-            </summary>
-        </member>
-        <member name="M:SFramework.Mathematics.PhysicsMath.IsApproximately(System.Double,System.Double,System.Double)">
-            <summary>
-            计算两个数字是否接近相等,阈值是dvalue
             </summary>
         </member>
         <member name="T:SplineMode">
@@ -3547,88 +3704,6 @@
             </summary>
             <param name="key"></param>
             <returns></returns>
-        </member>
-        <member name="F:Timer._isRunning">
-            <summary>
-            是否执行
-            </summary>
-        </member>
-        <member name="F:Timer._useTime">
-            <summary>
-            已执行时间（每次满足运行间隔就会加这个）
-            </summary>
-        </member>
-        <member name="P:Timer.RunTime">
-            <summary>
-            运行时间
-            </summary>
-        </member>
-        <member name="P:Timer.UseCount">
-            <summary>
-            已运行次数
-            </summary>
-        </member>
-        <member name="P:Timer.TimeInterval">
-            <summary>
-            运行间隔
-            </summary>
-        </member>
-        <member name="P:Timer.RepeatCount">
-            <summary>
-            设置的运行次数
-            </summary>
-        </member>
-        <member name="M:Timer.#ctor(System.Single,System.Int32)">
-            <summary>
-            <param name="interval">时间间隔，单位是毫秒</param>
-            <param name="repeatCount">运行次数，一秒一次的话MaxValue可以执行68年</param>
-            </summary>
-        </member>
-        <member name="P:Timer.IsRunning">
-            <summary>
-            是否运行中
-            </summary>
-        </member>
-        <member name="M:Timer.Update(System.Single)">
-            <summary>
-            每帧执行
-            </summary>
-            <param name="deltaTime"></param>
-        </member>
-        <member name="M:Timer.AddEventListener(System.Action)">
-            <summary>
-            添加事件
-            </summary>
-            <param name="type"></param>
-            <param name="fun"></param>
-        </member>
-        <member name="M:Timer.RemoveEventListener(System.Action)">
-            <summary>
-            移除事件
-            </summary>
-            <param name="type"></param>
-            <param name="fun"></param>
-        </member>
-        <member name="M:Timer.Start">
-            <summary>
-            开始(调用了IsRunning的Set,初始化了TimerManager)
-            </summary>
-        </member>
-        <member name="M:Timer.Pause">
-            <summary>
-            停止
-            </summary>
-        </member>
-        <member name="M:Timer.ReSet">
-            <summary>
-            重置
-            </summary>
-        </member>
-        <member name="T:Timer.TimerManager">
-            <summary>
-            计时器管理
-            除了计时器以外其他类暂时不需要调用，以后需要再放到外面去
-            </summary>
         </member>
         <member name="T:MonoEvent">
             <summary>

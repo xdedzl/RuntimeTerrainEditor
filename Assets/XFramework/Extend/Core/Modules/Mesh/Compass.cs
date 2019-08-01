@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace XFramework
+namespace XFramework.Draw
 {
     public class Compass : MonoBehaviour
     {

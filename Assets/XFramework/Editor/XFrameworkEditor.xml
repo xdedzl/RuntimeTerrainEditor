@@ -4,23 +4,6 @@
         <name>XFrameworkEditor</name>
     </assembly>
     <members>
-        <member name="T:AssetBundleEditor">
-            <summary>
-            打包 AssetBundle
-            </summary>
-        </member>
-        <member name="M:AssetBundleEditor.MarkDirectory(System.IO.DirectoryInfo,AssetBundleEditor.PackOption)">
-            <summary>
-            标记文件
-            </summary>
-            <param name="path"></param>
-            <param name="packOption"></param>
-        </member>
-        <member name="M:AssetBundleEditor.StartPack">
-            <summary>
-            开始打包
-            </summary>
-        </member>
         <member name="M:AssetOpenModeWindow.OpenAssetWithEnd(AssetOpenModeWindow.CodeOpneMode,System.String)">
             <summary>
             打开文件
@@ -39,6 +22,33 @@
         <member name="M:AssetOpenModeWindow.Load">
             <summary>
             加载编辑器变量
+            </summary>
+        </member>
+        <member name="T:XFramework.Editor.EditorIcon">
+            <summary>
+            编辑器图标资源
+            </summary>
+        </member>
+        <member name="T:XFramework.Editor.AssetBundleEditor">
+            <summary>
+            AssetBundle窗口
+            </summary>
+        </member>
+        <member name="M:XFramework.Editor.AssetBundleEditor.DefaultTab.MarkDirectory(System.IO.DirectoryInfo,XFramework.Editor.AssetBundleEditor.DefaultTab.PackOption)">
+            <summary>
+            标记文件
+            </summary>
+            <param name="path"></param>
+            <param name="packOption"></param>
+        </member>
+        <member name="M:XFramework.Editor.AssetBundleEditor.DependenceTab.AddPrefab">
+            <summary>
+            添加所有选中的预制体
+            </summary>
+        </member>
+        <member name="M:XFramework.Editor.AssetBundleEditor.DependenceTab.Build">
+            <summary>
+            打包预制体及依赖
             </summary>
         </member>
         <member name="M:XFramework.Editor.GenerateCodeWindow.DrawSelectUI">

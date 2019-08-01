@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using XFramework.Mathematics;
 using UnityEngine;
-using SFramework.Mathematics;
 
 namespace XFramework.TerrainMoudule
 {
@@ -156,12 +155,12 @@ namespace XFramework.TerrainMoudule
         {
             List<Vector3> outList = new List<Vector3>();
 
-            List<Vector3[]> triangles = PhysicsMath.PolygonToTriangles(_Points);    // 拿到所有三角形
-            for (int i = 0; i < triangles.Count; i++)
-            {
-                // 遍历所有三角形取得内部点集
-                outList.AddRange(PhysicsMath.GetPointsInTriangle(triangles[i], alphaPieceWidth, alphaPieceHeight));
-            }
+            //List<Vector3[]> triangles = PhysicsMath.PolygonToTriangles(_Points);    // 拿到所有三角形
+            //for (int i = 0; i < triangles.Count; i++)
+            //{
+            //    // 遍历所有三角形取得内部点集
+            //    outList.AddRange(PhysicsMath.GetPointsInTriangle(triangles[i], alphaPieceWidth, alphaPieceHeight));
+            //}
 
             return outList;
         }

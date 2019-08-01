@@ -5,11 +5,10 @@
 // 版本： V 1.0
 // ==========================================
 using System.Collections.Generic;
-using XFramework;
+using XFramework.Mathematics;
 using UnityEngine;
-using SFramework.Mathematics;
 
-namespace XFramework
+namespace XFramework.Draw
 {
     /// <summary>
     /// 所有的MeshPrefab 的管理类, 单例
@@ -110,7 +109,8 @@ namespace XFramework
         /// <param name="height">高度</param>
         public void CreatePolygon(List<Vector3> list, float height, Color color)
         {
-            Vector3[] vector3s = PhysicsMath.CheckVector(list);                              // 使数组逆时针排序
+            PhysicsMath.CheckVector(list);
+            Vector3[] vector3s = list.ToArray();                                        // 使数组逆时针排序
             Mesh mesh = GLDraw.CreatePolygon(vector3s, height, color.Int32());          // 画出图形
 
             Game.GraphicsModule.AddGraphics(Camera.main, () =>
@@ -171,7 +171,8 @@ namespace XFramework
         public void CreateKillBox(List<Vector3> list, float lower, float Ceiling, Color color)
         {
             // 第一个杀伤盒
-            Vector3[] vector3s1 = PhysicsMath.CheckVector(list);                                     // 使数组逆时针排序
+            PhysicsMath.CheckVector(list);
+            Vector3[] vector3s1 = list.ToArray();                                     // 使数组逆时针排序
             Mesh mesh0 = GLDraw.CreatePolygon(vector3s1, lower, color.Int32());               // 画出图形
 
             // 第二个杀伤盒
@@ -181,7 +182,8 @@ namespace XFramework
                 CeilingList.Add(item + Vector3.up * lower);
             }
 
-            Vector3[] vector3s2 = PhysicsMath.CheckVector(CeilingList);                               // 使数组逆时针排序
+            PhysicsMath.CheckVector(CeilingList);
+            Vector3[] vector3s2 = CeilingList.ToArray();                               // 使数组逆时针排序
             Mesh mesh1 = GLDraw.CreatePolygon(vector3s2, Ceiling - lower, color.Int32());      // 画出图形
 
             Game.GraphicsModule.AddGraphics(Camera.main, () =>

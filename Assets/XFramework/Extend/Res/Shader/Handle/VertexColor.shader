@@ -2,6 +2,7 @@
 Shader "RunTimeHandles/VertexColor" {
 	Properties
 	{
+		_Color("Color", Color) = (1,1,1,1)
 		_ZWrite("ZWrite", Float) = 0.0
 		_ZTest("ZTest", Float) = 0.0
 		_Cull("Cull", Float) = 0.0
@@ -32,6 +33,7 @@ Shader "RunTimeHandles/VertexColor" {
 				float4 color: COLOR;
 			};
 
+			fixed4 _Color;
 
 			inline float4 GammaToLinearSpace(float4 sRGB)
 			{
@@ -53,7 +55,7 @@ Shader "RunTimeHandles/VertexColor" {
 
 			float4 frag(vertexOutput input) : COLOR
 			{ 
-				return  input.color;
+				return  input.color * _Color;
 			}	
 
 			ENDCG

@@ -6,6 +6,7 @@
 // ==========================================
 using UnityEngine;
 using XFramework;
+using XFramework.Fsm;
 
 public class TerrainTest : ProcedureBase
 {
@@ -30,10 +31,10 @@ public class TerrainTest : ProcedureBase
 
     public override void OnUpdate()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            RaycastHit hit = Utility.SendRay(LayerMask.GetMask("Terrain"));
-            Game.TerrainModule.SetTexture(hit.point, 10, 1);
-        }
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    RaycastHit hit = Utility.SendRay(LayerMask.GetMask("Terrain"));
+        //    Game.TerrainModule.SetTexture(hit.point, 10, 1);
+        //}
     }
 }

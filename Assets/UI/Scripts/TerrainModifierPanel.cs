@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using XFramework;
+using XFramework.Fsm;
 using XFramework.UI;
 
 public class TerrainModifierPanel : BasePanel
@@ -264,7 +265,7 @@ public class TerrainModifierPanel : BasePanel
         }
     }
 
-    public override void OnOpen()
+    public override void OnOpen(object arg)
     {
         gameObject.SetActive(true);
         Game.FsmModule.GetFsm<MouseFsm>().StartFsm<MouseTerrainModifierState>();

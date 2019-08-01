@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using XFramework;
+using XFramework.Fsm;
 
 public class AutoCreateTest : ProcedureBase
 {
