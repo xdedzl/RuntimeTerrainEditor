@@ -14,7 +14,7 @@ public class TerrainTest : ProcedureBase
     {
         Game.UIModule.Open(UIName.TerrainModifier);
 
-        Game.FsmModule.GetFsm<MouseFsm>().StartFsm<MouseTerrainModifierState>();
+        Game.FsmModule.GetFsm<MouseFsm>().ChangeState<MouseTerrainModifierState>();
         Game.TerrainModule.ConfigActiveTerrains();
 
         float[,,] a = Terrain.activeTerrain.terrainData.GetAlphamaps(0, 500, 10, 10);

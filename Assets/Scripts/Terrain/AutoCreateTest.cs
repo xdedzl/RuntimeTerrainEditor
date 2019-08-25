@@ -10,7 +10,7 @@ public class AutoCreateTest : ProcedureBase
     public override void Init()
     {
         Game.UIModule.Open(UIName.TerrainModifier);
-        Game.FsmModule.GetFsm<MouseFsm>().StartFsm<MouseTerrainModifierState>();
+        Game.FsmModule.GetFsm<MouseFsm>().ChangeState<MouseTerrainModifierState>();
     }
 
     // Update is called once per frame

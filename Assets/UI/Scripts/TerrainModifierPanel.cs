@@ -268,7 +268,7 @@ public class TerrainModifierPanel : BasePanel
     public override void OnOpen(object arg)
     {
         gameObject.SetActive(true);
-        Game.FsmModule.GetFsm<MouseFsm>().StartFsm<MouseTerrainModifierState>();
+        Game.FsmModule.GetFsm<MouseFsm>().ChangeState<MouseTerrainModifierState>();
     }
 
     public override void OnClose()

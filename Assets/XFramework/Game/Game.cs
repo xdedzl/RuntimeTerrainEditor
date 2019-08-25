@@ -2,7 +2,6 @@ using UnityEngine;
 using XFramework;
 using XFramework.Pool;
 using XFramework.Tasks;
-using XFramework.Net;
 using XFramework.TerrainMoudule;
 using XFramework.Entity;
 using XFramework.Fsm;
@@ -21,12 +20,11 @@ public class Game : MonoBehaviour
     public static EntityManager EntityModule { get; private set; }
     public static FsmManager FsmModule { get; private set; }
     public static GraphicsManager GraphicsModule { get; private set; }
-    public static MessengerManager MessengerModule { get; private set; }
+    public static MessageManager MesseageModule { get; private set; }
     public static DataSubjectManager ObserverModule { get; private set; }
     public static ProcedureManager ProcedureModule { get; private set; }
     public static TaskManager TaskModule { get; private set; }
     public static ObjectPoolManager ObjectPool { get; private set; }
-    public static NetManager NetModule { get; private set; }
     public static TerrainManager TerrainModule { get; private set; }
     // End0
 
@@ -55,7 +53,7 @@ public class Game : MonoBehaviour
         System.Type type = System.Type.GetType(TypeName);
         if (type != null)
         {
-            ProcedureModule.StartProcedure(type);
+            ProcedureModule.ChangeProcedure(type);
 
             ProcedureBase procedure = ProcedureModule.GetCurrentProcedure();
             DeSerialize(procedure);
@@ -80,12 +78,11 @@ public class Game : MonoBehaviour
         EntityModule = GameEntry.AddModule<EntityManager>();
         FsmModule = GameEntry.AddModule<FsmManager>();
         GraphicsModule = GameEntry.AddModule<GraphicsManager>();
-        MessengerModule = GameEntry.AddModule<MessengerManager>();
+        MesseageModule = GameEntry.AddModule<MessageManager>();
         ObserverModule = GameEntry.AddModule<DataSubjectManager>();
         ProcedureModule = GameEntry.AddModule<ProcedureManager>();
         TaskModule = GameEntry.AddModule<TaskManager>();
         ObjectPool = GameEntry.AddModule<ObjectPoolManager>();
-        NetModule = GameEntry.AddModule<NetManager>();
         UIModule = GameEntry.AddModule<UIHelper>();
         MeshModule = GameEntry.AddModule<MeshManager>();
         ResModule = GameEntry.AddModule<ResourceManager>(new AssetDataBaseLoadHelper());
@@ -102,12 +99,11 @@ public class Game : MonoBehaviour
         EntityModule = GameEntry.GetModule<EntityManager>();
         FsmModule = GameEntry.GetModule<FsmManager>();
         GraphicsModule = GameEntry.GetModule<GraphicsManager>();
-        MessengerModule = GameEntry.GetModule<MessengerManager>();
+        MesseageModule = GameEntry.GetModule<MessageManager>();
         ObserverModule = GameEntry.GetModule<DataSubjectManager>();
         ProcedureModule = GameEntry.GetModule<ProcedureManager>();
         TaskModule = GameEntry.GetModule<TaskManager>();
         ObjectPool = GameEntry.GetModule<ObjectPoolManager>();
-        NetModule = GameEntry.GetModule<NetManager>();
         UIModule = GameEntry.GetModule<UIHelper>();
         MeshModule = GameEntry.GetModule<MeshManager>();
         ResModule = GameEntry.GetModule<ResourceManager>();

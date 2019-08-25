@@ -51,6 +51,13 @@
             打包预制体及依赖
             </summary>
         </member>
+        <member name="M:XFramework.Editor.AssetBundleEditor.Mainfest2Json.ConbineDependence(XFramework.Resource.DependenciesData[])">
+            <summary>
+            融合依赖关系
+            在数组中越靠后优先级越高
+            </summary>
+            <param name="datas"></param>
+        </member>
         <member name="M:XFramework.Editor.GenerateCodeWindow.DrawSelectUI">
             <summary>
             绘制 选择要分析的UI

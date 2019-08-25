@@ -90,7 +90,7 @@
         </member>
         <member name="F:XFramework.Entity.EntityManager.m_EntityInfoDic">
             <summary>
-            存储所有实体（在使用的，被回收在池中的）
+            存储实体父子关系的字典
             </summary>
         </member>
         <member name="M:XFramework.Entity.EntityManager.AddTemplate``1(UnityEngine.GameObject)">
@@ -111,7 +111,7 @@
             <param name="type">类型</param>
             <param name="template">模板</param>
         </member>
-        <member name="M:XFramework.Entity.EntityManager.Allocate``1(UnityEngine.Vector3,UnityEngine.Quaternion)">
+        <member name="M:XFramework.Entity.EntityManager.Allocate``1(System.Int32,UnityEngine.Vector3,UnityEngine.Quaternion)">
             <summary>
             分配实体
             </summary>
@@ -120,7 +120,7 @@
             <param name="quaternion">朝向</param>
             <returns></returns>
         </member>
-        <member name="M:XFramework.Entity.EntityManager.Allocate``1(XFramework.Entity.EntityData,UnityEngine.Vector3,UnityEngine.Quaternion)">
+        <member name="M:XFramework.Entity.EntityManager.Allocate``1(System.Int32,XFramework.Entity.EntityData,UnityEngine.Vector3,UnityEngine.Quaternion)">
             <summary>
             分配实体
             </summary>
@@ -130,12 +130,12 @@
             <param name="quaternion">朝向</param>
             <returns>实体</returns>
         </member>
-        <member name="M:XFramework.Entity.EntityManager.Allocate``1(System.String,XFramework.Entity.EntityData,UnityEngine.Vector3,UnityEngine.Quaternion)">
+        <member name="M:XFramework.Entity.EntityManager.Allocate``1(System.Int32,System.String,XFramework.Entity.EntityData,UnityEngine.Vector3,UnityEngine.Quaternion)">
             <summary>
             分配实体
             </summary>
         </member>
-        <member name="M:XFramework.Entity.EntityManager.Allocate(System.String,UnityEngine.Vector3,UnityEngine.Quaternion)">
+        <member name="M:XFramework.Entity.EntityManager.Allocate(System.Int32,System.String,UnityEngine.Vector3,UnityEngine.Quaternion)">
             <summary>
             分配实体
             </summary>
@@ -171,14 +171,20 @@
             <summary>
             附加实体，将child附加到parent上
             </summary>
-            <param name="child"></param>
-            <param name="parent"></param>
+            <param name="child">子实体</param>
+            <param name="parent">父实体</param>
         </member>
         <member name="M:XFramework.Entity.EntityManager.Detach(XFramework.Entity.Entity)">
             <summary>
             移除实体，将child从它的父物体上移除
             </summary>
             <param name="child"></param>
+            <param name="parent"></param>
+        </member>
+        <member name="M:XFramework.Entity.EntityManager.DetachChilds(XFramework.Entity.Entity)">
+            <summary>
+            移除父实体上的所有子实体
+            </summary>
             <param name="parent"></param>
         </member>
         <member name="M:XFramework.Entity.EntityManager.GetContainer(System.String)">
@@ -254,7 +260,20 @@
             实体池
             </summary>
         </member>
-        <member name="M:XFramework.Entity.EntityManager.EntityContainer.Instantiate(System.Int32,UnityEngine.Vector3,UnityEngine.Quaternion)">
+        <member name="M:XFramework.Entity.EntityManager.EntityContainer.#ctor(System.Type,System.String,UnityEngine.GameObject)">
+            <summary>
+            构造一个实体容器
+            </summary>
+            <param name="type">实体类型</param>
+            <param name="name">容器名</param>
+            <param name="template">实体模板</param>
+        </member>
+        <member name="P:XFramework.Entity.EntityManager.EntityContainer.Count">
+            <summary>
+            实体数量（不包括池种的）
+            </summary>
+        </member>
+        <member name="M:XFramework.Entity.EntityManager.EntityContainer.Instantiate(UnityEngine.Vector3,UnityEngine.Quaternion)">
             <summary>
             实体实例化及初始化
             </summary>
@@ -283,7 +302,7 @@
             获取容器中的所有实体
             </summary>
         </member>
-        <member name="M:XFramework.Entity.EntityManager.EntityContainer.Clean(System.Int32,System.Action{System.Int32})">
+        <member name="M:XFramework.Entity.EntityManager.EntityContainer.Clean(System.Int32)">
             <summary>
             清理实体池
             </summary>
@@ -390,11 +409,10 @@
             获取当前状态
             </summary>
         </member>
-        <member name="M:XFramework.Fsm.Fsm`1.StartFsm``1">
+        <member name="M:XFramework.Fsm.Fsm`1.StartFsm(System.Type)">
             <summary>
             开启状态机
             </summary>
-            <typeparam name="KState"></typeparam>
         </member>
         <member name="M:XFramework.Fsm.Fsm`1.ChangeState``1">
             <summary>
@@ -505,12 +523,6 @@
             <summary>
             每帧调用
             </summary>
-        </member>
-        <member name="M:XFramework.Fsm.IFsm.StartFsm``1">
-            <summary>
-            从某一状态开始一个状态机
-            </summary>
-            <typeparam name="T"></typeparam>
         </member>
         <member name="M:XFramework.Fsm.IFsm.ChangeState``1">
             <summary>
@@ -846,11 +858,6 @@
             事件分发类型
             </summary>
         </member>
-        <member name="T:XFramework.Event.MessengerManager">
-            <summary>
-            消息类 全局类消息
-            </summary>
-        </member>
         <member name="T:XFramework.Event.BaseData">
             <summary>
             观察者数据基类
@@ -914,136 +921,10 @@
             通知
             </summary>
         </member>
-        <member name="T:XFramework.Net.Connection">
+        <member name="T:XFramework.MessageManager">
             <summary>
-            连接信息
+            消息类 全局类消息
             </summary>
-        </member>
-        <member name="F:XFramework.Net.Connection.m_ReadBuff">
-            <summary>
-            缓冲区
-            </summary>
-        </member>
-        <member name="F:XFramework.Net.Connection.m_BufferCount">
-            <summary>
-            有效缓冲大小
-            </summary>
-        </member>
-        <member name="F:XFramework.Net.Connection.m_Socket">
-            <summary>
-            套接字
-            </summary>
-        </member>
-        <member name="F:XFramework.Net.Connection.m_Callback">
-            <summary>
-            回调事件
-            </summary>
-        </member>
-        <member name="P:XFramework.Net.Connection.m_BufferRemain">
-            <summary>
-            缓冲数组剩余空间
-            </summary>
-        </member>
-        <member name="M:XFramework.Net.Connection.GetAdress">
-            <summary>
-            获取地址
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:XFramework.Net.Connection.Close">
-            <summary>
-            关闭连接
-            </summary>
-        </member>
-        <member name="M:XFramework.Net.Connection.BeginReceive(XFramework.Net.ReceiveCallbcak,System.Object)">
-            <summary>
-            开启数据传输回调
-            </summary>
-            <param name="callback"></param>
-            <param name="state"></param>
-        </member>
-        <member name="M:XFramework.Net.Connection.ReceiveCb(System.IAsyncResult)">
-            <summary>
-            数据传输回调
-            </summary>
-            <param name="ar"></param>
-        </member>
-        <member name="M:XFramework.Net.Connection.ReadData(Net.Common.NetData@)">
-            <summary>
-            读取一条数据
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:XFramework.Net.Connection.Send(System.Int32,System.Byte[])">
-            <summary>
-            发送数据
-            </summary>
-            <param name="data"></param>
-        </member>
-        <member name="M:XFramework.Net.Connection.SendAsync(System.Int32,System.Byte[],System.AsyncCallback,System.Object)">
-            <summary>
-            异步发送数据
-            </summary>
-            <param name="data">源数据</param>
-            <param name="callback">传输完成回调</param>
-            <param name="state">包含请求的状态信息的对象</param>
-        </member>
-        <member name="M:XFramework.Net.Connection.PackageData(System.Byte[])">
-            <summary>
-            打包数据
-            </summary>
-            <param name="data">源数据</param>
-            <returns></returns>
-        </member>
-        <member name="M:XFramework.Net.NetManager.StartConnect(System.String,System.Int32)">
-            <summary>
-            开始连接
-            </summary>
-            <param name="host">主机名</param>
-            <param name="port">端口号</param>
-            <returns>连接是否成功</returns>
-        </member>
-        <member name="M:XFramework.Net.NetManager.StartConnectAsync(System.String,System.Int32,System.Action)">
-            <summary>
-            异步连接
-            </summary>
-            <param name="host">主机名</param>
-            <param name="port">端口号</param>
-            <param name="cb">连接成功的回调</param>
-            <returns>回调</returns>
-        </member>
-        <member name="M:XFramework.Net.NetManager.HandleCb(XFramework.Net.Connection)">
-            <summary>
-            消息处理的回调
-            </summary>
-            <param name="asyncResult"></param>
-        </member>
-        <member name="M:XFramework.Net.NetManager.Send(System.Int32,System.Byte[])">
-            <summary>
-            数据发送
-            </summary>
-            <param name="dataType">数据类型</param>
-            <param name="data">数据</param>
-        </member>
-        <member name="M:XFramework.Net.NetManager.Notify(Net.Common.NetData)">
-            <summary>
-            消息分发
-            </summary>
-            <param name="data"></param>
-        </member>
-        <member name="M:XFramework.Net.NetManager.AddListener(System.Enum,XFramework.Net.CallBack)">
-            <summary>
-            添加事件
-            </summary>
-            <param name="eventType"></param>
-            <param name="callBack"></param>
-        </member>
-        <member name="M:XFramework.Net.NetManager.RemoveListener(System.Enum,XFramework.Net.CallBack)">
-            <summary>
-            移除事件
-            </summary>
-            <param name="eventType"></param>
-            <param name="callBack"></param>
         </member>
         <member name="T:XFramework.Pool.IPoolable">
             <summary>
@@ -1194,12 +1075,6 @@
             流程状态机
             </summary>
         </member>
-        <member name="M:XFramework.ProcedureManager.StartProcedure``1">
-            <summary>
-            开启一个流程
-            </summary>
-            <typeparam name="TState"></typeparam>
-        </member>
         <member name="M:XFramework.ProcedureManager.ChangeProcedure``1">
             <summary>
             流程切换
@@ -1217,12 +1092,22 @@
             AB包加载助手
             </summary>
         </member>
+        <member name="F:XFramework.Resource.AssetBundleLoadHelper.m_ABPath">
+            <summary>
+            ab包路径
+            </summary>
+        </member>
+        <member name="F:XFramework.Resource.AssetBundleLoadHelper.m_Variant">
+            <summary>
+            ab包后缀名
+            </summary>
+        </member>
         <member name="F:XFramework.Resource.AssetBundleLoadHelper.m_ABDic">
             <summary>
             AB包的缓存
             </summary>
         </member>
-        <member name="F:XFramework.Resource.AssetBundleLoadHelper.dependenceInfo">
+        <member name="F:XFramework.Resource.AssetBundleLoadHelper.m_DependenceInfo">
             <summary>
             用于获取AB包的依赖关系
             </summary>
@@ -1260,11 +1145,6 @@
         <member name="T:XFramework.Resource.ResourceManager">
             <summary>
             资源管理器
-            </summary>
-        </member>
-        <member name="F:XFramework.Resource.ResourceManager.m_ResMode">
-            <summary>
-            资源加载方式
             </summary>
         </member>
         <member name="M:XFramework.Resource.ResourceManager.Load``1(System.String)">
@@ -1787,7 +1667,7 @@
             UI管理器接口
             </summary>
         </member>
-        <member name="M:XFramework.UI.IUIManager.OpenPanel(System.String,System.Object)">
+        <member name="M:XFramework.UI.IUIManager.OpenPanel(System.String,System.Boolean,System.Object)">
             <summary>
             打开面板
             </summary>
@@ -1827,7 +1707,7 @@
             处于打开状态的面板字典，key为层级
             </summary>
         </member>
-        <member name="M:XFramework.UI.UIMgrDicType.OpenPanel(System.String,System.Object)">
+        <member name="M:XFramework.UI.UIMgrDicType.OpenPanel(System.String,System.Boolean,System.Object)">
             <summary>
             打开面板
             </summary>
@@ -2892,10 +2772,185 @@
             计算两个数字是否接近相等,阈值是dvalue
             </summary>
         </member>
+        <member name="T:XFramework.Mathematics.SplineMode">
+            <summary>
+            样条类型
+            </summary>
+        </member>
+        <member name="T:XFramework.Mathematics.SplineCurve">
+            <summary>
+            样条曲线
+            </summary>
+        </member>
+        <member name="F:XFramework.Mathematics.SplineCurve.startNode">
+            <summary>
+            曲线起始节点
+            </summary>
+        </member>
+        <member name="F:XFramework.Mathematics.SplineCurve.endNode">
+            <summary>
+            曲线终结点
+            </summary>
+        </member>
+        <member name="F:XFramework.Mathematics.SplineCurve.nodeList">
+            <summary>
+            节点集合
+            </summary>
+        </member>
+        <member name="F:XFramework.Mathematics.SplineCurve.tangentsList">
+            <summary>
+            节点法线集合
+            </summary>
+        </member>
+        <member name="P:XFramework.Mathematics.SplineCurve.segmentList">
+            <summary>
+            曲线段集合
+            </summary>
+        </member>
+        <member name="P:XFramework.Mathematics.SplineCurve.mode">
+            <summary>
+            曲线构造类型
+            </summary>
+        </member>
+        <member name="M:XFramework.Mathematics.SplineCurve.AddCatmull_RomControl">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:XFramework.Mathematics.SplineCurve.AddNode(UnityEngine.Vector3,System.Single)">
+            <summary>
+            添加节点
+            </summary>
+            <param name="newNode"></param>
+        </member>
+        <member name="M:XFramework.Mathematics.SplineCurve.GetPoint(System.Int32,System.Single)">
+            <summary>
+            获取点
+            </summary>
+            <param name="index"></param>
+            <param name="t"></param>
+        </member>
+        <member name="M:XFramework.Mathematics.SplineCurve.GetTangents(System.Int32,System.Single)">
+            <summary>
+            获取切线
+            </summary>
+            <param name="index"></param>
+            <param name="t"></param>
+        </member>
+        <member name="M:XFramework.Mathematics.SplineCurve.CaculateTangents(System.Int32)">
+            <summary>
+            计算曲线段首尾切线
+            </summary>
+            <param name="index"></param>
+        </member>
+        <member name="T:XFramework.Mathematics.CurveSegement">
+            <summary>
+            曲线段
+            </summary>
+        </member>
+        <member name="F:XFramework.Mathematics.CurveSegement.rootCurve">
+            <summary>
+            所属曲线
+            </summary>
+        </member>
+        <member name="P:XFramework.Mathematics.CurveSegement.startNode">
+            <summary>
+            曲线段起始位置
+            </summary>
+        </member>
+        <member name="P:XFramework.Mathematics.CurveSegement.endNode">
+            <summary>
+            曲线段末尾位置
+            </summary>
+        </member>
+        <member name="P:XFramework.Mathematics.CurveSegement.c">
+            <summary>
+            张力系数
+            </summary>
+        </member>
+        <member name="M:XFramework.Mathematics.CurveSegement.GetPoint(System.Single)">
+            <summary>
+            获取点
+            </summary>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.Mathematics.CurveSegement.GetTangents(System.Single)">
+            <summary>
+            获取切线
+            </summary>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="T:XFramework.Mathematics.Node">
+            <summary>
+            曲线节点
+            </summary>
+        </member>
+        <member name="F:XFramework.Mathematics.Node.pos">
+            <summary>
+            节点位置
+            </summary>
+        </member>
+        <member name="F:XFramework.Mathematics.Node.preNode">
+            <summary>
+            前连接节点
+            </summary>
+        </member>
+        <member name="F:XFramework.Mathematics.Node.nextNode">
+            <summary>
+            后连接节点
+            </summary>
+        </member>
         <member name="T:XFramework.ColorInt32">
             <summary>
             此类是为了解决传参类型为Color时不能设置默认值的问题
             </summary>
+        </member>
+        <member name="T:XFramework.InputEvent">
+            <summary>
+            鼠标连续点击
+            </summary>
+        </member>
+        <member name="F:XFramework.InputEvent.activeSingleClick">
+            <summary>
+            是否响应单击事件
+            </summary>
+        </member>
+        <member name="F:XFramework.InputEvent.inteval">
+            <summary>
+            连击的最长间隔
+            </summary>
+        </member>
+        <member name="M:XFramework.InputEvent.RepeatKey(UnityEngine.KeyCode,System.Int32)">
+            <summary>
+            连击
+            </summary>
+            <param name="key"></param>
+            <param name="clickCount"></param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.InputEvent.CombineKey(UnityEngine.KeyCode,UnityEngine.KeyCode)">
+            <summary>
+            组合按键
+            </summary>
+            <param name="firstKey"></param>
+            <param name="sencondKey"></param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.InputEvent.GetKeyDown(UnityEngine.KeyCode)">
+            <summary>
+            替代Input.GetKeyDown
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:XFramework.InputEvent.GetKeyUp(UnityEngine.KeyCode)">
+            <summary>
+            替代Input.GetKeyUp
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
         </member>
         <member name="F:XFramework.Timer._isRunning">
             <summary>
@@ -2984,6 +3039,27 @@
             提供了一种基于字节流的协议
             </summary>
         </member>
+        <member name="F:XFramework.ProtocolBytes.buffer">
+            <summary>
+            传输的字节流,用于解码时
+            </summary>
+        </member>
+        <member name="F:XFramework.ProtocolBytes.bufferList">
+            <summary>
+            用于编码时
+            </summary>
+        </member>
+        <member name="M:XFramework.ProtocolBytes.#ctor">
+            <summary>
+            构造成编码器
+            </summary>
+        </member>
+        <member name="M:XFramework.ProtocolBytes.#ctor(System.Byte[])">
+            <summary>
+            构造成解码器
+            </summary>
+            <param name="_bytes">待解析的数据</param>
+        </member>
         <member name="M:XFramework.ProtocolBytes.Encode">
             <summary>
             编码器
@@ -3056,6 +3132,16 @@
             </summary>
             <param name="obj"></param>
             <param name="bindingAttr"></param>
+        </member>
+        <member name="M:XFramework.ProtocolBytes.Clear">
+            <summary>
+            清理缓存
+            </summary>
+        </member>
+        <member name="M:XFramework.ProtocolBytes.Clear(System.Byte[])">
+            <summary>
+            清理缓存并用bytes赋值进行解码
+            </summary>
         </member>
         <member name="T:XFramework.Extend">
             <summary>
@@ -3446,74 +3532,20 @@
             <param name="path"></param>
             <returns></returns>
         </member>
-        <member name="T:Net.Common.ProtocolBytes">
+        <member name="M:XFramework.Utility.UI.TexToSprite(UnityEngine.Texture2D)">
             <summary>
-            提供了一种基于字节流的协议
+            texture转sprite
             </summary>
-        </member>
-        <member name="M:Net.Common.ProtocolBytes.Encode">
-            <summary>
-            编码器
-            </summary>
+            <param name="tex"></param>
             <returns></returns>
         </member>
-        <member name="M:Net.Common.ProtocolBytes.GetByteLength">
+        <member name="M:XFramework.Utility.UI.CheckUICoincide(UnityEngine.Transform,UnityEngine.Transform)">
             <summary>
-            获取字节数量
+            判断是否source在target区域内
             </summary>
+            <param name="source"></param>
+            <param name="target"></param>
             <returns></returns>
-        </member>
-        <member name="M:Net.Common.ProtocolBytes.GetDesc">
-            <summary>
-            协议内容 提取每一个字节并组成字符串 用于查看消息
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Net.Common.ProtocolBytes.AddString(System.String)">
-            <summary>
-            将字符转转为字节数组加入字节流
-            </summary>
-            <param name="str">要添加的字符串</param>
-        </member>
-        <member name="M:Net.Common.ProtocolBytes.GetString">
-            <summary>
-            将字节数组转化为字符串
-            </summary>
-            <param name="index">索引起点</param>
-            <param name="end">为下一个转换提供索引起点</param>
-            <returns></returns>
-        </member>
-        <member name="M:Net.Common.ProtocolBytes.AddInt32(System.Int32)">
-            <summary>
-            将Int32转化成字节数组加入字节流
-            </summary>
-            <param name="num">要转化的Int32</param>
-        </member>
-        <member name="M:Net.Common.ProtocolBytes.GetInt32">
-            <summary>
-            将字节数组转化成Int32
-            </summary>
-        </member>
-        <member name="M:Net.Common.ProtocolBytes.AddFloat(System.Single)">
-            <summary>
-            将float转化成字节数组加入字节流
-            </summary>
-            <param name="num">要转化的float</param>
-        </member>
-        <member name="M:Net.Common.ProtocolBytes.GetFloat">
-            <summary>
-            将字节数组转化成float
-            </summary>
-        </member>
-        <member name="F:Net.Common.NetData.dataType">
-            <summary>
-            数据类型
-            </summary>
-        </member>
-        <member name="F:Net.Common.NetData.data">
-            <summary>
-            数据
-            </summary>
         </member>
         <member name="T:GameCoordinate">
             <summary>
@@ -3529,181 +3561,6 @@
             <summary>
             和世界坐标系的夹角(y轴向x轴方向)
             </summary>
-        </member>
-        <member name="T:SplineMode">
-            <summary>
-            样条类型
-            </summary>
-        </member>
-        <member name="T:SplineCurve">
-            <summary>
-            样条曲线
-            </summary>
-        </member>
-        <member name="F:SplineCurve.startNode">
-            <summary>
-            曲线起始节点
-            </summary>
-        </member>
-        <member name="F:SplineCurve.endNode">
-            <summary>
-            曲线终结点
-            </summary>
-        </member>
-        <member name="F:SplineCurve.nodeList">
-            <summary>
-            节点集合
-            </summary>
-        </member>
-        <member name="F:SplineCurve.tangentsList">
-            <summary>
-            节点法线集合
-            </summary>
-        </member>
-        <member name="P:SplineCurve.segmentList">
-            <summary>
-            曲线段集合
-            </summary>
-        </member>
-        <member name="P:SplineCurve.mode">
-            <summary>
-            曲线构造类型
-            </summary>
-        </member>
-        <member name="M:SplineCurve.AddCatmull_RomControl">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:SplineCurve.AddNode(UnityEngine.Vector3,System.Single)">
-            <summary>
-            添加节点
-            </summary>
-            <param name="newNode"></param>
-        </member>
-        <member name="M:SplineCurve.GetPoint(System.Int32,System.Single)">
-            <summary>
-            获取点
-            </summary>
-            <param name="index"></param>
-            <param name="t"></param>
-        </member>
-        <member name="M:SplineCurve.GetTangents(System.Int32,System.Single)">
-            <summary>
-            获取切线
-            </summary>
-            <param name="index"></param>
-            <param name="t"></param>
-        </member>
-        <member name="M:SplineCurve.CaculateTangents(System.Int32)">
-            <summary>
-            计算曲线段首尾切线
-            </summary>
-            <param name="index"></param>
-        </member>
-        <member name="T:CurveSegement">
-            <summary>
-            曲线段
-            </summary>
-        </member>
-        <member name="F:CurveSegement.rootCurve">
-            <summary>
-            所属曲线
-            </summary>
-        </member>
-        <member name="P:CurveSegement.startNode">
-            <summary>
-            曲线段起始位置
-            </summary>
-        </member>
-        <member name="P:CurveSegement.endNode">
-            <summary>
-            曲线段末尾位置
-            </summary>
-        </member>
-        <member name="P:CurveSegement.c">
-            <summary>
-            张力系数
-            </summary>
-        </member>
-        <member name="M:CurveSegement.GetPoint(System.Single)">
-            <summary>
-            获取点
-            </summary>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:CurveSegement.GetTangents(System.Single)">
-            <summary>
-            获取切线
-            </summary>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="T:Node">
-            <summary>
-            曲线节点
-            </summary>
-        </member>
-        <member name="F:Node.pos">
-            <summary>
-            节点位置
-            </summary>
-        </member>
-        <member name="F:Node.preNode">
-            <summary>
-            前连接节点
-            </summary>
-        </member>
-        <member name="F:Node.nextNode">
-            <summary>
-            后连接节点
-            </summary>
-        </member>
-        <member name="T:InputEvent">
-            <summary>
-            鼠标连续点击
-            </summary>
-        </member>
-        <member name="F:InputEvent.activeSingleClick">
-            <summary>
-            是否响应单击事件
-            </summary>
-        </member>
-        <member name="F:InputEvent.inteval">
-            <summary>
-            连击的最长间隔
-            </summary>
-        </member>
-        <member name="M:InputEvent.RepeatKey(UnityEngine.KeyCode,System.Int32)">
-            <summary>
-            连击
-            </summary>
-            <param name="key"></param>
-            <param name="clickCount"></param>
-            <returns></returns>
-        </member>
-        <member name="M:InputEvent.CombineKey(UnityEngine.KeyCode,UnityEngine.KeyCode)">
-            <summary>
-            组合按键
-            </summary>
-            <param name="firstKey"></param>
-            <param name="sencondKey"></param>
-            <returns></returns>
-        </member>
-        <member name="M:InputEvent.GetKeyDown(UnityEngine.KeyCode)">
-            <summary>
-            替代Input.GetKeyDown
-            </summary>
-            <param name="key"></param>
-            <returns></returns>
-        </member>
-        <member name="M:InputEvent.GetKeyUp(UnityEngine.KeyCode)">
-            <summary>
-            替代Input.GetKeyUp
-            </summary>
-            <param name="key"></param>
-            <returns></returns>
         </member>
         <member name="T:MonoEvent">
             <summary>

@@ -17,6 +17,7 @@ namespace XFramework.Resource
         }
 
         public string AssetPath => m_AssetPath;
+        public LoadMode LoadMode => LoadMode.AssetDataBase;
 
         public T Load<T>(string assetName) where T : UnityEngine.Object
         {
@@ -51,6 +52,10 @@ namespace XFramework.Resource
             }
             return objs.ToArray();
         }
+
+        public void UnLoad(string name) { }
+
+        public void UnLoadAll() { }
     }
 }
 
