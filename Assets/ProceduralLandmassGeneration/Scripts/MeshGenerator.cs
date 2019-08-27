@@ -4,8 +4,11 @@ using UnityEngine;
 
 public static class MeshGenerator
 {
-    public static MeshData GenerateTerrainMesh(float[,] heightMap, float meshHeightMultiplier, AnimationCurve heightCurver, int levelOfDetail)
+    public static MeshData GenerateTerrainMesh(float[,] heightMap, float meshHeightMultiplier, AnimationCurve _heightCurver, int levelOfDetail)
     {
+        // 多线程同时调用Evaluate时会返回一个错误的值
+        AnimationCurve heightCurver = new AnimationCurve(_heightCurver.keys);
+
         int width = heightMap.GetLength(0);
         int height = heightMap.GetLength(1);
         float topLeftX = (width - 1) / -2f;
@@ -21,6 +24,7 @@ public static class MeshGenerator
         {
             for (int x = 0; x < width; x += meshSimplificationIncrement)
             {
+                
                 meshData.vertices[vertexIndex] = new Vector3(topLeftX + x, heightCurver.Evaluate(heightMap[x, y]) * meshHeightMultiplier, topLeftZ - y);
                 meshData.uvs[vertexIndex] = new Vector2(x / (float)width, y / (float)height);
 

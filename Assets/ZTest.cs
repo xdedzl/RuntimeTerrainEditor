@@ -17,7 +17,7 @@ public class ZTest : MonoBehaviour
         while (true)
         {
             mapGenerator.seed++;
-            mapGenerator.GenerateMap();
+            mapGenerator.DrawMapInEdior();
             yield return new WaitForSeconds(0.5f);
         }
     }

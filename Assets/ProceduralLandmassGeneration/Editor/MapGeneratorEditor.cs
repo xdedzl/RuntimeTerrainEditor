@@ -14,13 +14,13 @@ public class MapGeneratorEditor : Editor
         {
             if (mapGen.autoUpdate)
             {
-                mapGen.GenerateMap();
+                mapGen.DrawMapInEdior();
             }
         }
 
         if (GUILayout.Button("Generator"))
         {
-            mapGen.GenerateMap();
+            mapGen.DrawMapInEdior();
         }
     }
 }
