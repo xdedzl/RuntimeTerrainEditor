@@ -56,12 +56,12 @@ public class MapGenerator : MonoBehaviour
 
     public void RequestMapData(Vector2 centre, Action<MapData> callback)
     {
-        ThreadStart threadStart = () =>
+        void ThreadStart()
         {
             MapDataThread(centre, callback);
-        };
+        }
 
-        new Thread(threadStart).Start();
+        new Thread(ThreadStart).Start();
     }
 
     private void MapDataThread(Vector2 centre, Action<MapData> callback)
@@ -76,12 +76,12 @@ public class MapGenerator : MonoBehaviour
 
     public void RequestMeshData(MapData mapData, int lod, Action<MeshData> callback)
     {
-        ThreadStart threadStart = () =>
+        void ThreadStart()
         {
             MeshDataThread(mapData, lod, callback);
-        };
+        }
 
-        new Thread(threadStart).Start();
+        new Thread(ThreadStart).Start();
     }
 
     private void MeshDataThread(MapData mapData, int lod, Action<MeshData> callback)

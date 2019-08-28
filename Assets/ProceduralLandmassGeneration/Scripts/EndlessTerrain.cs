@@ -164,10 +164,11 @@ public class EndlessTerrain : MonoBehaviour
                         LODMesh lodMesh = lodMeshs[lodIndex];
                         if (lodMesh.hasMesh)
                         {
+                            Debug.Log("刷新Mesh");
                             previousLODIndex = lodIndex;
                             meshFilter.mesh = lodMesh.mesh;
                         }
-                        else if (lodMesh.hasRequestedMesh)
+                        else if (!lodMesh.hasRequestedMesh)
                         {
                             lodMesh.RequestMesh(mapData);
                         }
