@@ -3,9 +3,12 @@ using UnityEngine;
 
 /// <summary>
 /// 无限地形
+/// x轴连接无问题，z轴不匹配
 /// </summary>
 public class EndlessTerrain : MonoBehaviour
 {
+    const float scale = 1f;
+
     const float viewerMoveThresholdForChunkUpdate = 25f;
     const float sqrViewerMoveThresholdForChunkUpdate = viewerMoveThresholdForChunkUpdate * viewerMoveThresholdForChunkUpdate;
 
@@ -22,7 +25,7 @@ public class EndlessTerrain : MonoBehaviour
     private int chunkVisibleInViewDst;
 
     private Dictionary<Vector2, TerrainChunk> terrainChunkDic = new Dictionary<Vector2, TerrainChunk>();
-    private List<TerrainChunk> terrainChunksVisibleLastUpdate = new List<TerrainChunk>();
+    private static List<TerrainChunk> terrainChunksVisibleLastUpdate = new List<TerrainChunk>();
 
     private void Start()
     {
@@ -37,7 +40,7 @@ public class EndlessTerrain : MonoBehaviour
 
     private void Update()
     {
-        viewerPostion = new Vector2(viewer.position.x, viewer.position.z);
+        viewerPostion = new Vector2(viewer.position.x, viewer.position.z) / scale;
 
         if((viewerPositionOld - viewerPostion).sqrMagnitude > sqrViewerMoveThresholdForChunkUpdate)
         {
@@ -65,10 +68,6 @@ public class EndlessTerrain : MonoBehaviour
                 if (terrainChunkDic.ContainsKey(viewedChunkCoord))
                 {
                     terrainChunkDic[viewedChunkCoord].UpdateTerrainChunk();
-                    if (terrainChunkDic[viewedChunkCoord].IsVisible)
-                    {
-                        terrainChunksVisibleLastUpdate.Add(terrainChunkDic[viewedChunkCoord]);
-                    }
                 }
                 else
                 {
@@ -108,8 +107,9 @@ public class EndlessTerrain : MonoBehaviour
             meshFilter = meshObject.AddComponent<MeshFilter>();
             meshRenderer.material = material;
 
-            meshObject.transform.position = positionV3;
+            meshObject.transform.position = positionV3 * scale;
             meshObject.transform.SetParent(parent);
+            meshObject.transform.localScale = Vector3.one * scale;
             SetVisible(false);
 
             lodMeshs = new LODMesh[detailLevels.Length];
@@ -173,6 +173,8 @@ public class EndlessTerrain : MonoBehaviour
                             lodMesh.RequestMesh(mapData);
                         }
                     }
+
+                    terrainChunksVisibleLastUpdate.Add(this);
                 }
 
                 SetVisible(visible);
