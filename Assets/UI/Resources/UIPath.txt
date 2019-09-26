@@ -1,13 +1,1 @@
-"MainPanel":"",
-
-"EntitiesPanel":"",
-"GroupPanel":"",
-"TimeLinePanel":"",
-
-"SettingPanel":"",
-
-"TerrainToolPanel":"",
-"TerrainModifierPanel":"",
-
-"AllGroupsPanel":"GroupEditor",
-"EditGroupPanel":"GroupEditor",
+"TerrainModifierPanel":"Assets/ABRes/UI",
