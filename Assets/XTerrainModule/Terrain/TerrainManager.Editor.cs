@@ -673,11 +673,39 @@ namespace XFramework.TerrainMoudule
         }
 
         /// <summary>
+        /// 修改细节数据
+        /// </summary>
+        /// <param name="alphaMap"></param>
+        /// <param name="count"></param>
+        private void ChangeAlphaMapNoMix(float[,,] alphaMap, int index)
+        {
+            int mapRadius = alphaMap.GetLength(0) / 2;
+            // 修改数据
+            for (int i = 0, length_0 = alphaMap.GetLength(0); i < length_0; i++)
+            {
+                for (int j = 0, length_1 = alphaMap.GetLength(1); j < length_1; j++)
+                {
+                    // 限定圆
+                    if ((i - mapRadius) * (i - mapRadius) + (j - mapRadius) * (j - mapRadius) > mapRadius * mapRadius)
+                        continue;
+                    for (int k = 0; k < alphaMap.GetLength(2); k++)
+                    {
+                        alphaMap[i, j, k] = 0;
+                    }
+                    alphaMap[i, j, index] = 1;
+                }
+            }
+        }
+
+        /// <summary>
         /// 设置贴图
         /// </summary>
-        /// <param name="point"></param>
-        /// <param name="index"></param>
-        private void InternalSetTexture(Vector3 center, float radius, int index, float strength)
+        /// <param name="center">中心点</param>
+        /// <param name="radius">半径</param>
+        /// <param name="index">layer索引</param>
+        /// <param name="strength">力度</param>
+        /// <param name="isMix">是否混合， 如果为false 则strength无效</param>
+        private void InternalSetTexture(Vector3 center, float radius, int index, float strength, bool isMix)
         {
             Vector3 leftDown = new Vector3(center.x - radius, 0, center.z - radius);
             Terrain terrain = Utility.SendRayDown(leftDown, LayerMask.GetMask("Terrain")).collider?.GetComponent<Terrain>();
@@ -690,7 +718,14 @@ namespace XFramework.TerrainMoudule
                 float[,,] alphaMap = TerrainUtility.GetAlphaMap(terrain, mapIndex.x, mapIndex.y, 2 * mapRadius, 2 * mapRadius);
 
                 // 修改数据
-                ChangeAlphaMap(alphaMap, index, strength);
+                if (isMix)
+                {
+                    ChangeAlphaMap(alphaMap, index, strength);
+                }
+                else
+                {
+                    ChangeAlphaMapNoMix(alphaMap, index);
+                }
 
                 // 设置数据
                 TerrainUtility.SetAlphaMap(terrain, alphaMap, mapIndex.x, mapIndex.y);
@@ -849,9 +884,20 @@ namespace XFramework.TerrainMoudule
         /// <param name="radius">半径</param>
         /// <param name="point">中心点</param>
         /// <param name="index">layer</param>
-        public void SetTexture(Vector3 point, float radius, int index, float strength = 1)
+        public void SetTexture(Vector3 point, float radius, int index, float strength)
         {
-            InternalSetTexture(point, radius, index, strength);
+            InternalSetTexture(point, radius, index, strength, true);
+        }
+
+        /// <summary>
+        /// 设置贴图
+        /// </summary>
+        /// <param name="radius">半径</param>
+        /// <param name="point">中心点</param>
+        /// <param name="index">layer</param>
+        public void SetTextureNoMix(Vector3 point, float radius, int index)
+        {
+            InternalSetTexture(point, radius, index, -1, false);
         }
 
         /// <summary>
