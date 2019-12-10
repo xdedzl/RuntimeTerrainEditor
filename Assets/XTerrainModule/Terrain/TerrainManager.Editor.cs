@@ -677,7 +677,7 @@ namespace XFramework.TerrainMoudule
         /// </summary>
         /// <param name="point"></param>
         /// <param name="index"></param>
-        public void InternalSetTexture(Vector3 center, float radius, int index, float strength)
+        private void InternalSetTexture(Vector3 center, float radius, int index, float strength)
         {
             Vector3 leftDown = new Vector3(center.x - radius, 0, center.z - radius);
             Terrain terrain = Utility.SendRayDown(leftDown, LayerMask.GetMask("Terrain")).collider?.GetComponent<Terrain>();
@@ -700,7 +700,7 @@ namespace XFramework.TerrainMoudule
         /// <summary>
         /// 利用笔刷设置贴图
         /// </summary>
-        public async void SetTextureWithBrush(Terrain terrain, Vector3 point, int index, float radius, float[,] brush)
+        private async void SetTextureWithBrush(Terrain terrain, Vector3 point, int index, float radius, float[,] brush)
         {
             Vector3 down = new Vector3(point.x - radius, 0, point.z - radius);
             if (terrain != null)
@@ -795,20 +795,25 @@ namespace XFramework.TerrainMoudule
         /// <summary>
         /// 创建树木
         /// </summary>
-        public void CreatTree(Terrain terrain, Vector3 pos, int count, int radius, int index = 0)
+        /// <param name="pos">中心点</param>
+        /// <param name="count">数量</param>
+        /// <param name="radius">种植半径</param>
+        /// <param name="index">树模板的索引</param>
+        public void CreatTree(Vector3 pos, int count, int radius, int index = 0)
         {
+            Terrain terrain = GetTerrain(pos);
             InternalCreatTree(terrain, pos, count, radius, index);
         }
 
         /// <summary>
         /// 移除地形上的树，没有做多地图的处理
         /// </summary>
-        /// <param name="terrain">目标地形</param>
         /// <param name="center">中心点</param>
         /// <param name="radius">半径</param>
         /// <param name="index">树模板的索引</param> 
-        public void RemoveTree(Terrain terrain, Vector3 center, float radius, int index = 0)
+        public void RemoveTree(Vector3 center, float radius, int index = 0)
         {
+            Terrain terrain = GetTerrain(center);
             InternalRemoveTree(terrain, center, radius, index);
         }
 
@@ -842,17 +847,20 @@ namespace XFramework.TerrainMoudule
         /// 设置贴图
         /// </summary>
         /// <param name="radius">半径</param>
-        /// <param name="point"></param>
-        /// <param name="index"></param>
+        /// <param name="point">中心点</param>
+        /// <param name="index">layer</param>
         public void SetTexture(Vector3 point, float radius, int index, float strength = 1)
         {
-            Terrain terrain = GetTerrain(point);
             InternalSetTexture(point, radius, index, strength);
         }
 
         /// <summary>
         /// 利用笔刷设置贴图
         /// </summary>
+        /// <param name="point">中心点</param>
+        /// <param name="index">layer</param>
+        /// <param name="radius">半径</param>
+        /// <param name="brushIndex">笔刷序号</param>
         public void SetTextureWithBrush(Vector3 point, int index, float radius, int brushIndex)
         {
             Terrain terrain = GetTerrain(point);

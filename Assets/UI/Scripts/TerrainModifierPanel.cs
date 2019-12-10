@@ -476,9 +476,9 @@ public class MouseTerrainModifierState : MouseState
                 break;
             case TerrainModifierPanel.ModifierType.AddTree:
                 if (isAdd)
-                    Game.TerrainModule.CreatTree(terrain, hitInfo.point, (int)(Panel.opticalMix.Value), (int)Panel.rangeMix.Value, Panel.PrototypeIndex);
+                    Game.TerrainModule.CreatTree(hitInfo.point, (int)(Panel.opticalMix.Value), (int)Panel.rangeMix.Value, Panel.PrototypeIndex);
                 else
-                    Game.TerrainModule.RemoveTree(terrain, hitInfo.point, (int)Panel.rangeMix.Value, Panel.PrototypeIndex);
+                    Game.TerrainModule.RemoveTree(hitInfo.point, (int)Panel.rangeMix.Value, Panel.PrototypeIndex);
                 break;
 
             // TODO 路面桥梁
