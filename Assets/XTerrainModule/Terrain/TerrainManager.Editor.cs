@@ -658,6 +658,7 @@ namespace XFramework.TerrainMoudule
         /// <param name="count"></param>
         private void ChangeAlphaMap(float[,,] alphaMap, int index, float strength)
         {
+            strength = Mathf.Clamp01(strength);
             int mapRadius = alphaMap.GetLength(0) / 2;
             // 修改数据
             for (int i = 0, length_0 = alphaMap.GetLength(0); i < length_0; i++)
@@ -667,7 +668,18 @@ namespace XFramework.TerrainMoudule
                     // 限定圆
                     if ((i - mapRadius) * (i - mapRadius) + (j - mapRadius) * (j - mapRadius) > mapRadius * mapRadius)
                         continue;
-                    alphaMap[i, j, index] = strength;
+
+                    for (int k = 0; k < alphaMap.GetLength(2); k++)
+                    {
+                        if(k != index)
+                        {
+                            alphaMap[i, j, k] = Mathf.Lerp(alphaMap[i, j, k], 0, strength);
+                        }
+                        else
+                        {
+                            alphaMap[i, j, k] = Mathf.Lerp(alphaMap[i, j, k], 1, strength);
+                        }
+                    }
                 }
             }
         }
@@ -884,7 +896,7 @@ namespace XFramework.TerrainMoudule
         /// <param name="radius">半径</param>
         /// <param name="point">中心点</param>
         /// <param name="index">layer</param>
-        public void SetTexture(Vector3 point, float radius, int index, float strength)
+        public void SetTexture(Vector3 point, float radius, int index, float strength = 0.05f)
         {
             InternalSetTexture(point, radius, index, strength, true);
         }
