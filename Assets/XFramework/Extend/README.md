@@ -1,3 +1,0 @@
-这个文件夹的内容提供了对XFramework的扩展，不是纯代码级别，包含了一些资源。
-有些扩展模块是由于目前的写法不方便打包成Dll,比如ResourceManager,这种扩展会在后期的改进移入XFramework文件夹
-ModuleDemoProcedure文件夹包含了一些扩展模块的示例流程，可以在Game脚本的面板上选择

@@ -1,0 +1,1 @@
+该运行时地形编辑器在制作时使用了作者维护的[XFramework](https://github.com/xdedzl/XFramework)的一些工具方法，但并没有把XFramework完整的放进工具，如果你的工程已经在使用[XFramework](https://github.com/xdedzl/XFramework)，那么应该删除该文件夹。
