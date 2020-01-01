@@ -372,9 +372,9 @@ public class TerrainModifierPanel : MonoBehaviour
                     break;
                 case ModifierType.Tree:
                     if (isAdd)
-                        Game.TerrainModule.CreatTree(hitInfo.point, (int)slider1.Value, (int)slider2.Value, prototypeIndex);
+                        Game.TerrainModule.CreatTree(hitInfo.point, (int)slider2.Value, (int)slider1.Value, prototypeIndex);
                     else
-                        Game.TerrainModule.RemoveTree(hitInfo.point, (int)slider1.Value, prototypeIndex);
+                        Game.TerrainModule.RemoveTree(hitInfo.point, (int)slider2.Value, prototypeIndex);
                     break;
                 default:
                     break;
