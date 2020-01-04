@@ -322,13 +322,13 @@ public class TerrainModifierPanel : MonoBehaviour
                 switch (TerrainModifierType)
                 {
                     case TerrainModifierType.Up:
-                        Game.TerrainModule.ChangeHeight(hitInfo.point, slider1.Value, slider2.Value, true, true);
+                        Game.TerrainModule.ChangeHeightWithBrush(hitInfo.point, slider1.Value, slider2.Value, prototypeIndex, true, true);
                         break;
                     case TerrainModifierType.Down:
-                        Game.TerrainModule.ChangeHeight(hitInfo.point, slider1.Value, slider2.Value, false, true);
+                        Game.TerrainModule.ChangeHeightWithBrush(hitInfo.point, slider1.Value, slider2.Value, prototypeIndex, false, true);
                         break;
                     case TerrainModifierType.Smooth:
-                        Game.TerrainModule.Smooth(hitInfo.point, slider1.Value, slider2.Value);
+                        Game.TerrainModule.Smooth(hitInfo.point, slider1.Value, slider2.Value, regesterUndo:true);
                         break;
                     default:
                         break;
@@ -336,12 +336,12 @@ public class TerrainModifierPanel : MonoBehaviour
                 break;
             case ModifierType.Detial:
                 if (isAdd)
-                    Game.TerrainModule.AddDetial(hitInfo.point, slider1.Value, (int)slider2.Value, prototypeIndex);
+                    Game.TerrainModule.AddDetial(hitInfo.point, slider1.Value, (int)slider2.Value, prototypeIndex, true);
                 else
-                    Game.TerrainModule.RemoveDetial(hitInfo.point, slider1.Value, (int)slider2.Value);
+                    Game.TerrainModule.RemoveDetial(hitInfo.point, slider1.Value, (int)slider2.Value, true);
                 break;
             case ModifierType.Texture:
-                Game.TerrainModule.SetTexture(hitInfo.point, slider1.Value, prototypeIndex, 0.05f * slider2.Value);
+                Game.TerrainModule.SetTexture(hitInfo.point, slider1.Value, prototypeIndex, 0.05f * slider2.Value, true);
                 break;
             default:
                 break;

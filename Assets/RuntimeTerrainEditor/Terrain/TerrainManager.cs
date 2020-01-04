@@ -111,131 +111,212 @@ namespace XFramework.TerrainMoudule
         }
 
         #endregion
-    }
 
-    /// <summary>
-    /// 高度图修改的初始化参数
-    /// </summary>
-    public struct HeightMapCmd
-    {
-        /// <summary>
-        /// 要执行的地形
-        /// </summary>
-        public Terrain terrain;
-        /// <summary>
-        /// 修改地形的起始索引
-        /// </summary>
-        public Vector2Int startMapIndex;
-        /// <summary>
-        /// 准备修改的宽度
-        /// </summary>
-        public int mapRadiusX;
-        /// <summary>
-        /// 准备修改的宽度
-        /// </summary>
-        public int mapRadiusZ;
-        /// <summary>
-        /// 修改的目标（当修改的时地图最外圈时，其一二维的length和mapRadius不一定相等）
-        /// </summary>
-        public float[,] heightMap;
 
-        public HeightMapCmd(HeightMapCmd source)
+
+        #region OtherClass
+
+        /// <summary>
+        /// 高度图修改的初始化参数
+        /// </summary>
+        public struct HeightCmdData
         {
-            terrain = source.terrain;
-            startMapIndex = source.startMapIndex;
-            mapRadiusX = source.mapRadiusX;
-            mapRadiusZ = source.mapRadiusZ;
-            heightMap = new float[source.heightMap.GetLength(0), source.heightMap.GetLength(0)];
-            Buffer.BlockCopy(source.heightMap, 0, heightMap, 0, heightMap.Length * 4);
-        }
-    }
+            /// <summary>
+            /// 要执行的地形
+            /// </summary>
+            public Terrain terrain;
+            /// <summary>
+            /// 修改地形的起始索引
+            /// </summary>
+            public Vector2Int startMapIndex;
+            /// <summary>
+            /// 准备修改的宽度
+            /// </summary>
+            public int mapRadiusX;
+            /// <summary>
+            /// 准备修改的宽度
+            /// </summary>
+            public int mapRadiusZ;
+            /// <summary>
+            /// 修改的目标（当修改的时地图最外圈时，其一二维的length和mapRadius不一定相等）
+            /// </summary>
+            public float[,] heightMap;
 
-    /// <summary>
-    /// 地形数据
-    /// </summary>
-    public struct TDInfo
-    {
-        /// <summary>
-        /// 用于修改高度的单位高度
-        /// </summary>
-        public float deltaHeight;
-        /// <summary>
-        /// 地形大小
-        /// </summary>
-        public Vector3 terrainSize;
-        /// <summary>
-        /// 高度图分辨率
-        /// </summary>
-        public int heightMapRes;
-        /// <summary>
-        /// alphaMap分辨率
-        /// </summary>
-        public int alphaMapRes;
-        /// <summary>
-        /// 高度图每一小格的宽度
-        /// </summary>
-        public float pieceWidth;
-        /// <summary>
-        /// 高度图每一小格的高度
-        /// </summary>
-        public float pieceHeight;
-
-        /// <summary>
-        /// AlphaMap每一小格的宽度
-        /// </summary>
-        public float alphaPieceWidth;
-        /// <summary>
-        /// AlphaMap每一小格的高度
-        /// </summary>
-        public float alphaPieceHeight;
-
-        public TDInfo(Terrain terrain)
-        {
-            if (terrain != null)
+            public HeightCmdData(HeightCmdData source)
             {
-                deltaHeight = 1 / terrain.terrainData.size.y;
-                terrainSize = terrain.terrainData.size;
-                heightMapRes = terrain.terrainData.heightmapResolution;
-                alphaMapRes = terrain.terrainData.alphamapResolution;
-
-                pieceWidth = terrainSize.x / (heightMapRes - 1);
-                pieceHeight = terrainSize.z / (heightMapRes - 1);
-
-                alphaPieceWidth = terrainSize.x / (alphaMapRes);
-                alphaPieceHeight = terrainSize.z / (alphaMapRes);
-            }
-            else
-            {
-                throw new System.Exception("terrain 不能为空");
+                terrain = source.terrain;
+                startMapIndex = source.startMapIndex;
+                mapRadiusX = source.mapRadiusX;
+                mapRadiusZ = source.mapRadiusZ;
+                heightMap = new float[source.heightMap.GetLength(0), source.heightMap.GetLength(0)];
+                Buffer.BlockCopy(source.heightMap, 0, heightMap, 0, heightMap.Length * 4);
             }
         }
-    }
 
-    public interface ICmd 
-    {
-        void Undo(TerrainManager t);
-    }
-
-    public class TerrainCmd : ICmd
-    {
-        private HeightMapCmd cmd;
-
-        public TerrainCmd(HeightMapCmd cmd)
+        public struct DetialCmdData
         {
-            this.cmd = cmd;
+            /// <summary>
+            /// 要执行的地形
+            /// </summary>
+            public Terrain terrain;
+            /// <summary>
+            /// 修改地形的起始索引
+            /// </summary>
+            public Vector2Int startMapIndex;
+            /// <summary>
+            /// 层级
+            /// </summary>
+            public int layer;
+            /// <summary>
+            /// 细节图
+            /// </summary>
+            public int[,] detailMap;
+
+            public DetialCmdData(Terrain terrain, Vector2Int startMapIndex, int layer, int[,] detailMap)
+            {
+                this.terrain = terrain;
+                this.startMapIndex = startMapIndex;
+                this.layer = layer;
+                this.detailMap = new int[detailMap.GetLength(0), detailMap.GetLength(1)];
+                Buffer.BlockCopy(detailMap, 0, this.detailMap, 0, detailMap.Length * 4);
+            }
         }
 
-        public void Undo(TerrainManager t)
+        public struct TextureCmdData
         {
-            t.SetHeightMap(cmd.terrain, cmd.heightMap, cmd.startMapIndex.x, cmd.startMapIndex.y, true);
-        }
-    }
+            /// <summary>
+            /// 要执行的地形
+            /// </summary>
+            public Terrain terrain;
+            /// <summary>
+            /// 修改地形的起始索引
+            /// </summary>
+            public Vector2Int startMapIndex;
+            /// <summary>
+            /// 纹理图
+            /// </summary>
+            public float[,,] alphaMap;
 
-    public struct TerrainCmdData
-    {
-        public int x;
-        public int y;
-        public Terrain terrain;
-        public float[,] heights;
+            public TextureCmdData(Terrain terrain, Vector2Int startMapIndex, float[,,] alphaMap)
+            {
+                this.terrain = terrain;
+                this.startMapIndex = startMapIndex;
+                this.alphaMap = new float[alphaMap.GetLength(0), alphaMap.GetLength(1), alphaMap.GetLength(2)];
+                Buffer.BlockCopy(alphaMap, 0, this.alphaMap, 0, alphaMap.Length * 4);
+            }
+        }
+
+        /// <summary>
+        /// 地形数据
+        /// </summary>
+        public struct TDInfo
+        {
+            /// <summary>
+            /// 用于修改高度的单位高度
+            /// </summary>
+            public float deltaHeight;
+            /// <summary>
+            /// 地形大小
+            /// </summary>
+            public Vector3 terrainSize;
+            /// <summary>
+            /// 高度图分辨率
+            /// </summary>
+            public int heightMapRes;
+            /// <summary>
+            /// alphaMap分辨率
+            /// </summary>
+            public int alphaMapRes;
+            /// <summary>
+            /// 高度图每一小格的宽度
+            /// </summary>
+            public float pieceWidth;
+            /// <summary>
+            /// 高度图每一小格的高度
+            /// </summary>
+            public float pieceHeight;
+
+            /// <summary>
+            /// AlphaMap每一小格的宽度
+            /// </summary>
+            public float alphaPieceWidth;
+            /// <summary>
+            /// AlphaMap每一小格的高度
+            /// </summary>
+            public float alphaPieceHeight;
+
+            public TDInfo(Terrain terrain)
+            {
+                if (terrain != null)
+                {
+                    deltaHeight = 1 / terrain.terrainData.size.y;
+                    terrainSize = terrain.terrainData.size;
+                    heightMapRes = terrain.terrainData.heightmapResolution;
+                    alphaMapRes = terrain.terrainData.alphamapResolution;
+
+                    pieceWidth = terrainSize.x / (heightMapRes - 1);
+                    pieceHeight = terrainSize.z / (heightMapRes - 1);
+
+                    alphaPieceWidth = terrainSize.x / (alphaMapRes);
+                    alphaPieceHeight = terrainSize.z / (alphaMapRes);
+                }
+                else
+                {
+                    throw new System.Exception("terrain 不能为空");
+                }
+            }
+        }
+
+        public interface ICmd
+        {
+            void Undo(TerrainManager t);
+        }
+
+        public struct HeightCmd : ICmd
+        {
+            private HeightCmdData cmd;
+
+            public HeightCmd(HeightCmdData cmd)
+            {
+                this.cmd = cmd;
+            }
+
+            public void Undo(TerrainManager t)
+            {
+                t.SetHeightMap(cmd.terrain, cmd.heightMap, cmd.startMapIndex.x, cmd.startMapIndex.y, true);
+            }
+        }
+
+        public struct DetialCmd : ICmd
+        {
+            private DetialCmdData cmd;
+
+            public DetialCmd(DetialCmdData cmd)
+            {
+                this.cmd = cmd;
+            }
+
+            public void Undo(TerrainManager t)
+            {
+                TerrainUtility.SetDetailLayer(cmd.terrain, cmd.detailMap, cmd.startMapIndex.x, cmd.startMapIndex.y, cmd.layer);
+            }
+        }
+
+        public struct TextureCmd : ICmd
+        {
+            private TextureCmdData cmd;
+
+            public TextureCmd(TextureCmdData cmd)
+            {
+                this.cmd = cmd;
+            }
+
+            public void Undo(TerrainManager t)
+            {
+                TerrainUtility.SetAlphaMap(cmd.terrain, cmd.alphaMap, cmd.startMapIndex.x, cmd.startMapIndex.y);
+            }
+        }
+
+        #endregion
     }
 }

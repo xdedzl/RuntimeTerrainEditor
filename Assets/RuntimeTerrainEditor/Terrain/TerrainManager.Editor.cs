@@ -187,13 +187,13 @@ namespace XFramework.TerrainMoudule
         /// <param name="mapRadius">修改半径对应的索引半径</param>
         /// <param name="arg">得到的命令参数</param>
         /// <returns>是否获取成功</returns>
-        private bool TryGetHeightMapCmd(Vector3 center, float radius, out HeightMapCmd arg)
+        private bool TryGetHeightMapCmd(Vector3 center, float radius, out HeightCmdData arg)
         {
             Vector3 leftDown = new Vector3(center.x - radius, 0, center.z - radius);
             // 左下方Terrain
             Terrain centerTerrain = Utility.SendRayDown(center, LayerMask.GetMask("Terrain")).collider?.GetComponent<Terrain>();
             Terrain leftDownTerrain = Utility.SendRayDown(leftDown, LayerMask.GetMask("Terrain")).collider?.GetComponent<Terrain>();
-            arg = default(HeightMapCmd);
+            arg = default(HeightCmdData);
             if (leftDownTerrain != null)
             {
                 // 获取相关参数
@@ -273,9 +273,9 @@ namespace XFramework.TerrainMoudule
         /// <param name="isRise">抬高还是降低</param>
         private void InternalChangeHeight(Vector3 center, float radius, float opacity, bool isRise, bool regesterUndo)
         {
-            if (!TryGetHeightMapCmd(center, radius, out HeightMapCmd arg)) return;
+            if (!TryGetHeightMapCmd(center, radius, out HeightCmdData arg)) return;
 
-            if(regesterUndo) RegisterUndo(new TerrainCmd(new HeightMapCmd(arg)));
+            if(regesterUndo) RegisterUndo(new HeightCmd(new HeightCmdData(arg)));
 
             if (!isRise) opacity = -opacity;
 
@@ -307,9 +307,9 @@ namespace XFramework.TerrainMoudule
         /// <param name="isRise">抬高还是降低</param>
         private async void InternalChangeHeightWithBrush(Vector3 center, float radius, float opacity, int brushIndex, bool isRise, bool regesterUndo)
         {
-            if (!TryGetHeightMapCmd(center, radius, out HeightMapCmd arg)) return;
+            if (!TryGetHeightMapCmd(center, radius, out HeightCmdData arg)) return;
 
-            if(regesterUndo) RegisterUndo(new TerrainCmd(new HeightMapCmd(arg)));
+            if(regesterUndo) RegisterUndo(new HeightCmd(new HeightCmdData(arg)));
 
             // 是否反转透明度
             if (!isRise) opacity = -opacity;
@@ -343,9 +343,9 @@ namespace XFramework.TerrainMoudule
             center.z -= terrainSize.z / (heightMapRes - 1) * level;
             radius += terrainSize.x / (heightMapRes - 1) * level;
 
-            if (!TryGetHeightMapCmd(center, radius, out HeightMapCmd arg)) return;
+            if (!TryGetHeightMapCmd(center, radius, out HeightCmdData arg)) return;
 
-            if(regesterUndo) RegisterUndo(new TerrainCmd(new HeightMapCmd(arg)));
+            if(regesterUndo) RegisterUndo(new HeightCmd(new HeightCmdData(arg)));
 
             // 利用高斯模糊做平滑处理
             Math2d.GaussianBlur(arg.heightMap, dev, level, false);
@@ -478,7 +478,7 @@ namespace XFramework.TerrainMoudule
         /// <param name="radius"></param>
         /// <param name="layer"></param>
         /// <param name="count"></param>
-        private void InternalSetDetail(Vector3 center, float radius, int layer, int count)
+        private void InternalSetDetail(Vector3 center, float radius, int layer, int count, bool regesterUndo)
         {
             Vector3 leftDown = new Vector3(center.x - radius, 0, center.z - radius);
             Terrain terrain = Utility.SendRayDown(leftDown, LayerMask.GetMask("Terrain")).collider?.GetComponent<Terrain>();
@@ -489,6 +489,12 @@ namespace XFramework.TerrainMoudule
                 int mapRadius = (int)(radius / terrainData.size.x * terrainData.detailResolution);
                 Vector2Int mapIndex = TerrainUtility.GetDetialMapIndex(terrain, leftDown);
                 int[,] detailMap = TerrainUtility.GetDetailLayer(terrain, mapIndex.x, mapIndex.y, 2 * mapRadius, 2 * mapRadius, layer);
+
+                if (regesterUndo)
+                {
+                    DetialCmdData detialCmdData = new DetialCmdData(terrain, mapIndex, layer, detailMap);
+                    RegisterUndo(new DetialCmd(detialCmdData));
+                }
 
                 // 修改数据
                 ChangeDetailMap(detailMap, count);
@@ -568,7 +574,7 @@ namespace XFramework.TerrainMoudule
         /// <param name="index">layer索引</param>
         /// <param name="strength">力度</param>
         /// <param name="isMix">是否混合， 如果为false 则strength无效</param>
-        private void InternalSetTexture(Vector3 center, float radius, int index, float strength, bool isMix)
+        private void InternalSetTexture(Vector3 center, float radius, int index, float strength, bool isMix, bool regesterUndo)
         {
             Vector3 leftDown = new Vector3(center.x - radius, 0, center.z - radius);
             Terrain terrain = Utility.SendRayDown(leftDown, LayerMask.GetMask("Terrain")).collider?.GetComponent<Terrain>();
@@ -579,6 +585,12 @@ namespace XFramework.TerrainMoudule
                 int mapRadius = (int)(radius / terrainData.size.x * terrainData.alphamapResolution);
                 Vector2Int mapIndex = TerrainUtility.GetAlphaMapIndex(terrain, leftDown);
                 float[,,] alphaMap = TerrainUtility.GetAlphaMap(terrain, mapIndex.x, mapIndex.y, 2 * mapRadius, 2 * mapRadius);
+
+                if (regesterUndo)
+                {
+                    TextureCmdData textureCmdData = new TextureCmdData(terrain, mapIndex, alphaMap);
+                    RegisterUndo(new TextureCmd(textureCmdData));
+                }
 
                 // 修改数据
                 if (isMix)
@@ -722,9 +734,9 @@ namespace XFramework.TerrainMoudule
         /// <param name="center">目标中心点</param>
         /// <param name="radius">半径</param>
         /// <param name="layer">层级</param>
-        public void AddDetial(Vector3 center, float radius, int count, int layer = 0)
+        public void AddDetial(Vector3 center, float radius, int count, int layer = 0, bool regesterUndo = false)
         {
-            InternalSetDetail(center, radius, layer, count);
+            InternalSetDetail(center, radius, layer, count, regesterUndo);
         }
 
         /// <summary>
@@ -734,9 +746,9 @@ namespace XFramework.TerrainMoudule
         /// <param name="center">目标中心点</param>
         /// <param name="radius">半径</param>
         /// <param name="layer">层级</param>
-        public void RemoveDetial(Vector3 point, float radius, int layer = 0)
+        public void RemoveDetial(Vector3 point, float radius, int layer = 0, bool regesterUndo = false)
         {
-            InternalSetDetail(point, radius, layer, 0);
+            InternalSetDetail(point, radius, layer, 0, regesterUndo);
         }
 
 
@@ -746,9 +758,9 @@ namespace XFramework.TerrainMoudule
         /// <param name="radius">半径</param>
         /// <param name="point">中心点</param>
         /// <param name="index">layer</param>
-        public void SetTexture(Vector3 point, float radius, int index, float strength = 0.05f)
+        public void SetTexture(Vector3 point, float radius, int index, float strength = 0.05f, bool regesterUndo = false)
         {
-            InternalSetTexture(point, radius, index, strength, true);
+            InternalSetTexture(point, radius, index, strength, true, regesterUndo);
         }
 
         /// <summary>
@@ -757,9 +769,9 @@ namespace XFramework.TerrainMoudule
         /// <param name="radius">半径</param>
         /// <param name="point">中心点</param>
         /// <param name="index">layer</param>
-        public void SetTextureNoMix(Vector3 point, float radius, int index)
+        public void SetTextureNoMix(Vector3 point, float radius, int index, bool regesterUndo = false)
         {
-            InternalSetTexture(point, radius, index, -1, false);
+            InternalSetTexture(point, radius, index, -1, false, regesterUndo);
         }
 
         /// <summary>
