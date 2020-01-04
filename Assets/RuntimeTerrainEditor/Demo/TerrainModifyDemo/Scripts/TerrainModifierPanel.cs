@@ -87,10 +87,7 @@ public class TerrainModifierPanel : MonoBehaviour
 
     public void Awake()
     {
-        Game.TerrainModule.ConfigActiveTerrains();
-
         InitTextureDic();
-        ConfigTerrainEditor();
 
         // 初始化组件
 
@@ -167,25 +164,6 @@ public class TerrainModifierPanel : MonoBehaviour
 
         // 自动设置卷轴贴图
         RefeshToogleList();
-    }
-
-    /// <summary>
-    /// 配置地形编辑
-    /// </summary>
-    private void ConfigTerrainEditor()
-    {
-        foreach (var item in Terrain.activeTerrains)
-        {
-            item.terrainData.treePrototypes = new TreePrototype[0];
-            item.terrainData.detailPrototypes = new DetailPrototype[0];
-            item.terrainData.terrainLayers = new TerrainLayer[0];
-        }
-        Game.TerrainModule.InitBrushs(Resources.LoadAll<Texture2D>("Terrain/Brushs"));
-        Game.TerrainModule.InitTreePrototype(Resources.LoadAll<GameObject>("Terrain/Trees"));
-        Game.TerrainModule.InitDetailPrototype(Resources.LoadAll<Texture2D>("Terrain/Details"));
-        Game.TerrainModule.InitTerrainLayers(Resources.LoadAll<TerrainLayer>("Terrain/TerrainLayers"));
-
-        Game.TerrainModule.ConfigActiveTerrains();
     }
 
     /// <summary>
@@ -305,6 +283,10 @@ public class TerrainModifierPanel : MonoBehaviour
             }
         }
 
+        if (Input.GetMouseButtonDown(0))
+        {
+            OnLeftButtonDown();
+        }
         if (Input.GetMouseButton(0))
         {
             OnLeftButtonHold();
@@ -313,6 +295,16 @@ public class TerrainModifierPanel : MonoBehaviour
         {
             OnLeftButtonUp();
         }
+
+        if(Input.GetKey(KeyCode.Z))
+        {
+            Game.TerrainModule.Undo();
+        }
+    }
+
+    public void OnLeftButtonDown()
+    {
+        
     }
 
     /// <summary>
@@ -330,10 +322,10 @@ public class TerrainModifierPanel : MonoBehaviour
                 switch (TerrainModifierType)
                 {
                     case TerrainModifierType.Up:
-                        Game.TerrainModule.ChangeHeightWithBrush(hitInfo.point, slider1.Value, slider2.Value, prototypeIndex);
+                        Game.TerrainModule.ChangeHeight(hitInfo.point, slider1.Value, slider2.Value, true, true);
                         break;
                     case TerrainModifierType.Down:
-                        Game.TerrainModule.ChangeHeightWithBrush(hitInfo.point, slider1.Value, slider2.Value, prototypeIndex, false);
+                        Game.TerrainModule.ChangeHeight(hitInfo.point, slider1.Value, slider2.Value, false, true);
                         break;
                     case TerrainModifierType.Smooth:
                         Game.TerrainModule.Smooth(hitInfo.point, slider1.Value, slider2.Value);
@@ -368,7 +360,6 @@ public class TerrainModifierPanel : MonoBehaviour
             {
                 case ModifierType.Terrain:
                     Game.TerrainModule.Refresh();
-                    Game.TerrainModule.AddOldData();
                     break;
                 case ModifierType.Tree:
                     if (isAdd)

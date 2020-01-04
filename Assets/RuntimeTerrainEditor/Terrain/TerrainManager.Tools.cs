@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using XFramework.Mathematics;
 using UnityEngine;
 
 namespace XFramework.TerrainMoudule
@@ -134,16 +133,6 @@ namespace XFramework.TerrainMoudule
                 return true;
             }
             return false;
-        }
-
-        /// <summary>
-        /// 获取地形上某一位置的坡度值
-        /// </summary>
-        /// <param name="pos"></param>
-        public float GetSeepness(Vector3 pos)
-        {
-            Terrain terrain = GetTerrain(pos);
-            return TerrainUtility.GetSeepness(terrain, pos);
         }
 
         /// <summary>

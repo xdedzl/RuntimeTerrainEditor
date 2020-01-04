@@ -12,7 +12,7 @@ namespace XFramework.TerrainMoudule
         #region 高度图相关
         /*
          * 高度编辑的过程
-         * 1.InitHMArg初始化所需要的数据，高度图会在这里获取到
+         * 1.TryGetHeightMapCmd初始化所需要的数据，高度图会在这里获取到
          * 2.对得到的高度图按需处理
          * 3.SetHeightsMap对地形高度图重新赋值
          */
@@ -20,24 +20,27 @@ namespace XFramework.TerrainMoudule
         /// <summary>
         /// 初始化笔刷
         /// </summary>
-        public void InitBrushs(Texture2D[] textures)
+        private void InitBrushs(Texture2D[] textures)
         {
-            for (int i = 0, length = textures.Length; i < length; i++)
+            if (textures != null)
             {
-                // 获取图片颜色ARGB信息
-                Color[] colors = textures[i].GetPixels();
-                // terrainData.GetHeightMap得到的二维数组是[y,x]
-                float[,] alphas = new float[textures[i].height, textures[i].width];
-                // 设置笔刷数据
-                for (int j = 0, length0 = textures[i].height, index = 0; j < length0; j++)
+                for (int i = 0, length = textures.Length; i < length; i++)
                 {
-                    for (int k = 0, length1 = textures[i].width; k < length1; k++)
+                    // 获取图片颜色ARGB信息
+                    Color[] colors = textures[i].GetPixels();
+                    // terrainData.GetHeightMap得到的二维数组是[y,x]
+                    float[,] alphas = new float[textures[i].height, textures[i].width];
+                    // 设置笔刷数据
+                    for (int j = 0, length0 = textures[i].height, index = 0; j < length0; j++)
                     {
-                        alphas[j, k] = colors[index].a;
-                        index++;
+                        for (int k = 0, length1 = textures[i].width; k < length1; k++)
+                        {
+                            alphas[j, k] = colors[index].a;
+                            index++;
+                        }
                     }
+                    brushDic.Add(i, alphas);
                 }
-                brushDic.Add(i, alphas);
             }
         }
 
@@ -111,7 +114,7 @@ namespace XFramework.TerrainMoudule
         /// <param name="xBase">X起点</param>
         /// <param name="yBase">Y起点</param>
         /// <param name="immediate">是否立即刷新地图</param>
-        private void SetHeightMap(Terrain terrain, float[,] heights, int xBase = 0, int yBase = 0, bool immediate = true)
+        public void SetHeightMap(Terrain terrain, float[,] heights, int xBase = 0, int yBase = 0, bool immediate = true)
         {
             TerrainData terrainData = terrain.terrainData;
             int length_1 = heights.GetLength(1);
@@ -152,9 +155,6 @@ namespace XFramework.TerrainMoudule
         {
             if (terrain == null)
                 return;
-            if (!terrainDataDic.ContainsKey(terrain))
-                terrainDataDic.Add(terrain, GetHeightMap(terrain));
-
 
             if (immediate)
                 terrain.terrainData.SetHeights(xBase, yBase, heights);      // 会立即刷新整个地形LOD,不适合实时编辑
@@ -181,47 +181,43 @@ namespace XFramework.TerrainMoudule
 
         /// <summary>
         /// 初始化地形高度图编辑所需要的参数
-        /// 后四个参数需要在调用前定义
-        /// 编辑高度时所需要用到的参数后期打算用一个结构体封装
         /// </summary>
         /// <param name="center">目标中心</param>
         /// <param name="radius">半径</param>
-        /// <param name="mapIndex">起始修改点在高度图上的索引</param>
-        /// <param name="heightMap">要修改的高度二维数组</param>
         /// <param name="mapRadius">修改半径对应的索引半径</param>
-        /// <param name="limit">限制高度</param>
-        /// <returns></returns>
-        private Terrain InitHMArg(Vector3 center, float radius, out HMArg arg)
+        /// <param name="arg">得到的命令参数</param>
+        /// <returns>是否获取成功</returns>
+        private bool TryGetHeightMapCmd(Vector3 center, float radius, out HeightMapCmd arg)
         {
             Vector3 leftDown = new Vector3(center.x - radius, 0, center.z - radius);
             // 左下方Terrain
             Terrain centerTerrain = Utility.SendRayDown(center, LayerMask.GetMask("Terrain")).collider?.GetComponent<Terrain>();
             Terrain leftDownTerrain = Utility.SendRayDown(leftDown, LayerMask.GetMask("Terrain")).collider?.GetComponent<Terrain>();
-            arg = default(HMArg);
+            arg = default(HeightMapCmd);
             if (leftDownTerrain != null)
             {
                 // 获取相关参数
+                arg.terrain = leftDownTerrain;
                 arg.mapRadiusX = (int)(heightMapRes / terrainSize.x * radius);
                 arg.mapRadiusZ = (int)(heightMapRes / terrainSize.z * radius);
                 arg.mapRadiusX = arg.mapRadiusX < 1 ? 1 : arg.mapRadiusX;
                 arg.mapRadiusZ = arg.mapRadiusZ < 1 ? 1 : arg.mapRadiusZ;
                 arg.startMapIndex = TerrainUtility.GetHeightmapIndex(leftDownTerrain, leftDown);
-                arg.centerMapIndex = new Vector2Int(arg.startMapIndex.x + arg.mapRadiusX, arg.startMapIndex.y + arg.mapRadiusZ);
                 arg.heightMap = GetHeightMap(leftDownTerrain, arg.startMapIndex.x, arg.startMapIndex.y, 2 * arg.mapRadiusX, 2 * arg.mapRadiusZ);
-                arg.limit = 0/*heightMap[mapRadius, mapRadius]*/;
-                return leftDownTerrain;
+                return true;
             }
             // 左下至少有一个方向没有Terrain,大多数情况下不会进入，如果删掉地图的左边界和下边界无法编辑，影响不大，其实我很想删掉，所以注释什么的就去TM的吧
             else if (centerTerrain != null)
             {
                 // 获取相关参数
+                arg.terrain = centerTerrain;
                 arg.mapRadiusX = (int)(heightMapRes / terrainSize.x * radius);
                 arg.mapRadiusZ = (int)(heightMapRes / terrainSize.z * radius);
                 arg.mapRadiusX = arg.mapRadiusX < 1 ? 1 : arg.mapRadiusX;
                 arg.mapRadiusZ = arg.mapRadiusZ < 1 ? 1 : arg.mapRadiusZ;
 
-                arg.centerMapIndex = TerrainUtility.GetHeightmapIndex(centerTerrain, center);
-                arg.startMapIndex = new Vector2Int(arg.centerMapIndex.x - arg.mapRadiusX, arg.centerMapIndex.y - arg.mapRadiusZ);
+                var centerMapIndex = TerrainUtility.GetHeightmapIndex(centerTerrain, center);
+                arg.startMapIndex = new Vector2Int(centerMapIndex.x - arg.mapRadiusX, centerMapIndex.y - arg.mapRadiusZ);
 
                 int width = 2 * arg.mapRadiusX, height = 2 * arg.mapRadiusZ;
 
@@ -263,9 +259,9 @@ namespace XFramework.TerrainMoudule
                 }
 
                 arg.heightMap = GetHeightMap(centerTerrain, arg.startMapIndex.x, arg.startMapIndex.y, width, height);
-                arg.limit = 0/*heightMap[mapRadius, mapRadius]*/;
+                return true;
             }
-            return centerTerrain;
+            return false;
         }
 
         /// <summary>
@@ -275,12 +271,11 @@ namespace XFramework.TerrainMoudule
         /// <param name="radius">半径</param>
         /// <param name="opacity">力度</param>
         /// <param name="isRise">抬高还是降低</param>
-        /// <param name="amass">是否累加高度</param>
-        private void InternalChangeHeight(Vector3 center, float radius, float opacity, bool isRise = true, bool amass = true)
+        private void InternalChangeHeight(Vector3 center, float radius, float opacity, bool isRise, bool regesterUndo)
         {
-            HMArg arg;
-            Terrain terrain = InitHMArg(center, radius, out arg);
-            if (terrain == null) return;
+            if (!TryGetHeightMapCmd(center, radius, out HeightMapCmd arg)) return;
+
+            if(regesterUndo) RegisterUndo(new TerrainCmd(new HeightMapCmd(arg)));
 
             if (!isRise) opacity = -opacity;
 
@@ -290,27 +285,16 @@ namespace XFramework.TerrainMoudule
                 for (int j = 0, length_1 = arg.heightMap.GetLength(1); j < length_1; j++)
                 {
                     // 限制范围为一个圆
-                    float rPow = Mathf.Pow(i + arg.mapRadiusZ - (arg.centerMapIndex.y - arg.startMapIndex.y) - arg.mapRadiusZ, 2) + Mathf.Pow(j + arg.mapRadiusX - (arg.centerMapIndex.x - arg.startMapIndex.x) - arg.mapRadiusX, 2);
+                    float rPow = Mathf.Pow(i - arg.mapRadiusZ, 2) + Mathf.Pow(j - arg.mapRadiusX, 2);
                     if (rPow > arg.mapRadiusX * arg.mapRadiusZ)
                         continue;
 
                     float differ = 1 - rPow / (arg.mapRadiusX * arg.mapRadiusZ);
-                    if (amass)
-                    {
-                        arg.heightMap[i, j] += differ * deltaHeight * opacity;
-                    }
-                    else if (isRise)
-                    {
-                        arg.heightMap[i, j] = arg.heightMap[i, j] >= arg.limit ? arg.heightMap[i, j] : arg.heightMap[i, j] + differ * deltaHeight * opacity;
-                    }
-                    else
-                    {
-                        arg.heightMap[i, j] = arg.heightMap[i, j] <= arg.limit ? arg.heightMap[i, j] : arg.heightMap[i, j] + differ * deltaHeight * opacity;
-                    }
+                    arg.heightMap[i, j] += differ * deltaHeight * opacity;
                 }
             }
             // 重新设置高度图
-            SetHeightMap(terrain, arg.heightMap, arg.startMapIndex.x, arg.startMapIndex.y, false);
+            SetHeightMap(arg.terrain, arg.heightMap, arg.startMapIndex.x, arg.startMapIndex.y, false);
         }
 
         /// <summary>
@@ -321,11 +305,11 @@ namespace XFramework.TerrainMoudule
         /// <param name="opacity">力度</param>
         /// <param name="brushIndex">笔刷索引</param>
         /// <param name="isRise">抬高还是降低</param>
-        private async void InternalChangeHeightWithBrush(Vector3 center, float radius, float opacity, int brushIndex = 0, bool isRise = true)
+        private async void InternalChangeHeightWithBrush(Vector3 center, float radius, float opacity, int brushIndex, bool isRise, bool regesterUndo)
         {
-            HMArg arg;
-            Terrain terrain = InitHMArg(center, radius, out arg);
-            if (terrain == null) return;
+            if (!TryGetHeightMapCmd(center, radius, out HeightMapCmd arg)) return;
+
+            if(regesterUndo) RegisterUndo(new TerrainCmd(new HeightMapCmd(arg)));
 
             // 是否反转透明度
             if (!isRise) opacity = -opacity;
@@ -343,7 +327,7 @@ namespace XFramework.TerrainMoudule
             }
 
             // 重新设置高度图
-            SetHeightMap(terrain, arg.heightMap, arg.startMapIndex.x, arg.startMapIndex.y);
+            SetHeightMap(arg.terrain, arg.heightMap, arg.startMapIndex.x, arg.startMapIndex.y);
         }
 
         /// <summary>
@@ -353,60 +337,19 @@ namespace XFramework.TerrainMoudule
         /// <param name="radius">半径</param>
         /// <param name="dev">这是高斯模糊的一个参数，会影响平滑的程度</param>
         /// <param name="level">构建高斯核的半径</param>
-        public void InternalSmooth(Vector3 center, float radius, float dev, int level = 3)
+        private void InternalSmooth(Vector3 center, float radius, float dev, int level, bool regesterUndo)
         {
             center.x -= terrainSize.x / (heightMapRes - 1) * level;
             center.z -= terrainSize.z / (heightMapRes - 1) * level;
             radius += terrainSize.x / (heightMapRes - 1) * level;
-            HMArg arg;
-            Terrain terrain = InitHMArg(center, radius, out arg);
-            if (terrain == null) return;
+
+            if (!TryGetHeightMapCmd(center, radius, out HeightMapCmd arg)) return;
+
+            if(regesterUndo) RegisterUndo(new TerrainCmd(new HeightMapCmd(arg)));
+
             // 利用高斯模糊做平滑处理
             Math2d.GaussianBlur(arg.heightMap, dev, level, false);
-            SetHeightMap(terrain, arg.heightMap, arg.startMapIndex.x, arg.startMapIndex.y, false);
-        }
-
-        /// <summary>
-        /// 批量平滑操作
-        /// </summary>
-        public void BatchSmooth(Vector3[] centers, float radius, float dev, int level = 1)
-        {
-            float differx = terrainSize.x / (heightMapRes - 1) * level;
-            float differz = terrainSize.z / (heightMapRes - 1) * level;
-            int arrayLength = centers.Length;
-            for (int i = 0; i < arrayLength; i++)
-            {
-                centers[i].x -= differx;
-                centers[i].z -= differz;
-            }
-            Terrain[] terrains = new Terrain[arrayLength];
-
-            HMArg[] args = new HMArg[arrayLength];
-            //Loom.Initialize();
-            for (int i = 0; i < arrayLength; i++)
-            {
-                terrains[i] = InitHMArg(centers[i], radius, out args[i]);
-                BatchSmooth(terrains[i], args[i].heightMap, args[i].startMapIndex, dev, level);
-                //BatchSmoothAsync(terrains[i], heightMaps[i], mapIndexs[i], dev, level);
-            }
-        }
-
-        private void BatchSmooth(Terrain terrain, float[,] heightMap, Vector2Int mapIndex, float dev, int level = 1)
-        {
-            if (terrain != null)
-            {
-                //Loom.RunAsync(() =>
-                //{
-                //    for (int i = 0; i < 10; i++)
-                //    {
-                //        Math2d.GaussianBlur(heightMap, dev, level);
-                //    }
-                //    Loom.QueueOnMainThread(() =>
-                //    {
-                //        SetHeightMap(terrain, heightMap, mapIndex.x, mapIndex.y, false);
-                //    });
-                //});
-            }
+            SetHeightMap(arg.terrain, arg.heightMap, arg.startMapIndex.x, arg.startMapIndex.y, false);
         }
 
         /// <summary>
@@ -428,40 +371,11 @@ namespace XFramework.TerrainMoudule
             }
 
             terrain.terrainData.SetHeights(0, 0, heights);
-            //TerrainUtility.Flatten(terrain, height, tdInfo); 
         }
 
         #endregion
 
         #region 树木
-
-        /// <summary>
-        /// 创建树木原型并返回
-        /// </summary>
-        /// <returns></returns>
-        public TreePrototype[] CreatTreePrototype(GameObject[] treeObjs)
-        {
-            TreePrototype[] trees = new TreePrototype[treeObjs.Length];
-            for (int i = 0, length = treeObjs.Length; i < length; i++)
-            {
-                trees[i] = new TreePrototype();
-                trees[i].prefab = treeObjs[i];
-            }
-            return trees;
-        }
-
-        /// <summary>
-        /// 初始化树木原型组
-        /// </summary>
-        public void InitTreePrototype(GameObject[] treeObjs)
-        {
-            TreePrototype[] trees = CreatTreePrototype(treeObjs);
-            Terrain[] terrains = Terrain.activeTerrains;
-            for (int i = 0, length = terrains.Length; i < length; i++)
-            {
-                terrains[i].terrainData.treePrototypes = terrains[i].terrainData.treePrototypes.Concat(trees).ToArray();
-            }
-        }
 
         /// <summary>
         /// 创建树木
@@ -536,46 +450,6 @@ namespace XFramework.TerrainMoudule
         #region 细节纹理 草
 
         /// <summary>
-        /// 创建细节原型并返回
-        /// </summary>
-        /// <returns></returns>
-        public DetailPrototype[] CreateDetailPrototype(Texture2D[] textures)
-        {
-            DetailPrototype[] details = new DetailPrototype[textures.Length];
-
-            for (int i = 0, length = details.Length; i < length; i++)
-            {
-                details[i] = new DetailPrototype();
-                details[i].prototypeTexture = textures[i];
-                details[i].minWidth = 1f;
-                details[i].maxWidth = 2f;
-                details[i].maxHeight = 0.2f;
-                details[i].maxHeight = 0.8f;
-                details[i].noiseSpread = 1f;
-                details[i].healthyColor = Color.green;
-                details[i].dryColor = Color.green;
-                details[i].renderMode = DetailRenderMode.GrassBillboard;
-            }
-
-            return details;
-        }
-
-        /// <summary>
-        /// 初始化细节原型组
-        /// </summary>
-        public void InitDetailPrototype(Texture2D[] textures)
-        {
-            DetailPrototype[] details = CreateDetailPrototype(textures);
-
-            Terrain[] terrains = Terrain.activeTerrains;
-            for (int i = 0, length = terrains.Length; i < length; i++)
-            {
-                terrains[i].terrainData.detailPrototypes = terrains[i].terrainData.detailPrototypes.Concat(details).ToArray();
-                terrains[i].detailObjectDistance = 250;  // 设置草的消失距离 
-            }
-        }
-
-        /// <summary>
         /// 修改细节数据
         /// </summary>
         /// <param name="detailMap"></param>
@@ -627,29 +501,6 @@ namespace XFramework.TerrainMoudule
         #endregion
 
         #region 贴图
-
-        /// <summary>
-        /// 创建贴图原型并返回
-        /// </summary>
-        /// <returns></returns>
-        public TerrainLayer[] CreateSplatPrototype()
-        {
-            TerrainLayer[] splats = Resources.LoadAll<TerrainLayer>("Terrain/TerrainLayers");
-
-            return splats;
-        }
-
-        /// <summary>
-        /// 初始化贴图原型
-        /// </summary>
-        public void InitTerrainLayers(TerrainLayer[] terrainLayers)
-        {
-            Terrain[] terrains = Terrain.activeTerrains;
-            for (int i = 0, length = terrains.Length; i < length; i++)
-            {
-                terrains[i].terrainData.terrainLayers = terrains[i].terrainData.terrainLayers.Concat(terrainLayers).ToArray();
-            }
-        }
 
         /// <summary>
         /// 修改细节数据
@@ -785,10 +636,9 @@ namespace XFramework.TerrainMoudule
         /// <param name="radius">半径</param>
         /// <param name="opacity">力度</param>
         /// <param name="isRise">抬高还是降低</param>
-        /// <param name="amass">是否累加高度</param>
-        public void ChangeHeight(Vector3 center, float radius, float opacity, bool isRise = true, bool amass = true)
+        public void ChangeHeight(Vector3 center, float radius, float opacity, bool isRise = true, bool regesterUndo = false)
         {
-            InternalChangeHeight(center, radius, opacity, isRise, amass);
+            InternalChangeHeight(center, radius, opacity, isRise, regesterUndo);
         }
 
         /// <summary>
@@ -799,9 +649,9 @@ namespace XFramework.TerrainMoudule
         /// <param name="opacity">力度</param>
         /// <param name="brushIndex">笔刷索引</param>
         /// <param name="isRise">抬高还是降低</param>
-        public void ChangeHeightWithBrush(Vector3 center, float radius, float opacity, int brushIndex = 0, bool isRise = true)
+        public void ChangeHeightWithBrush(Vector3 center, float radius, float opacity, int brushIndex = 0, bool isRise = true, bool regesterUndo = false)
         {
-            InternalChangeHeightWithBrush(center, radius, opacity, brushIndex, isRise);
+            InternalChangeHeightWithBrush(center, radius, opacity, brushIndex, isRise, regesterUndo);
         }
 
         /// <summary>
@@ -811,9 +661,9 @@ namespace XFramework.TerrainMoudule
         /// <param name="radius">半径</param>
         /// <param name="dev">这是高斯模糊的一个参数，会影响平滑的程度</param>
         /// <param name="level">构建高斯和的半径</param>
-        public void Smooth(Vector3 center, float radius, float dev, int level = 3)
+        public void Smooth(Vector3 center, float radius, float dev, int level = 3, bool regesterUndo = false)
         {
-            InternalSmooth(center, radius, dev, level);
+            InternalSmooth(center, radius, dev, level, regesterUndo);
         }
 
         /// <summary>

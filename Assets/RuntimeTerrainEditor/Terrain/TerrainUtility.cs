@@ -20,10 +20,10 @@ namespace XFramework.TerrainMoudule
 #if UNITY_2018_3_OR_NEWER
             return terrain.rightNeighbor;
 #else
-        Vector3 rayStart = terrain.GetPosition() + new Vector3(terrain.terrainData.size.x * 1.5f, 10000, terrain.terrainData.size.z * 0.5f);
-        RaycastHit hitInfo;
-        Physics.Raycast(rayStart, Vector3.down, out hitInfo, float.MaxValue, LayerMask.GetMask("Terrain"));
-        return hitInfo.collider?.GetComponent<Terrain>();
+            Vector3 rayStart = terrain.GetPosition() + new Vector3(terrain.terrainData.size.x * 1.5f, 10000, terrain.terrainData.size.z * 0.5f);
+            RaycastHit hitInfo;
+            Physics.Raycast(rayStart, Vector3.down, out hitInfo, float.MaxValue, LayerMask.GetMask("Terrain"));
+            return hitInfo.collider?.GetComponent<Terrain>();
 #endif
         }
 
@@ -37,10 +37,10 @@ namespace XFramework.TerrainMoudule
 #if UNITY_2018_3_OR_NEWER
             return terrain.topNeighbor;
 #else
-        Vector3 rayStart = terrain.GetPosition() + new Vector3(terrain.terrainData.size.x * 0.5f, 10000, terrain.terrainData.size.z * 1.5f);
-        RaycastHit hitInfo;
-        Physics.Raycast(rayStart, Vector3.down, out hitInfo, float.MaxValue, LayerMask.GetMask("Terrain"));
-        return hitInfo.collider?.GetComponent<Terrain>();
+            Vector3 rayStart = terrain.GetPosition() + new Vector3(terrain.terrainData.size.x * 0.5f, 10000, terrain.terrainData.size.z * 1.5f);
+            RaycastHit hitInfo;
+            Physics.Raycast(rayStart, Vector3.down, out hitInfo, float.MaxValue, LayerMask.GetMask("Terrain"));
+            return hitInfo.collider?.GetComponent<Terrain>();
 #endif
         }
 
@@ -54,10 +54,10 @@ namespace XFramework.TerrainMoudule
 #if UNITY_2018_3_OR_NEWER
             return terrain.leftNeighbor;
 #else
-        Vector3 rayStart = terrain.GetPosition() + new Vector3(-terrain.terrainData.size.x * 0.5f, 10000, terrain.terrainData.size.z * 0.5f);
-        RaycastHit hitInfo;
-        Physics.Raycast(rayStart, Vector3.down, out hitInfo, float.MaxValue, LayerMask.GetMask("Terrain"));
-        return hitInfo.collider?.GetComponent<Terrain>();
+            Vector3 rayStart = terrain.GetPosition() + new Vector3(-terrain.terrainData.size.x * 0.5f, 10000, terrain.terrainData.size.z * 0.5f);
+            RaycastHit hitInfo;
+            Physics.Raycast(rayStart, Vector3.down, out hitInfo, float.MaxValue, LayerMask.GetMask("Terrain"));
+            return hitInfo.collider?.GetComponent<Terrain>();
 #endif
         }
 
@@ -71,10 +71,10 @@ namespace XFramework.TerrainMoudule
 #if UNITY_2018_3_OR_NEWER
             return terrain.bottomNeighbor;
 #else
-        Vector3 rayStart = terrain.GetPosition() + new Vector3(terrain.terrainData.size.x * 0.5f, 10000, -terrain.terrainData.size.z * 0.5f);
-        RaycastHit hitInfo;
-        Physics.Raycast(rayStart, Vector3.down, out hitInfo, float.MaxValue, LayerMask.GetMask("Terrain"));
-        return hitInfo.collider?.GetComponent<Terrain>();
+            Vector3 rayStart = terrain.GetPosition() + new Vector3(terrain.terrainData.size.x * 0.5f, 10000, -terrain.terrainData.size.z * 0.5f);
+            RaycastHit hitInfo;
+            Physics.Raycast(rayStart, Vector3.down, out hitInfo, float.MaxValue, LayerMask.GetMask("Terrain"));
+            return hitInfo.collider?.GetComponent<Terrain>();
 #endif
         }
 
@@ -108,14 +108,12 @@ namespace XFramework.TerrainMoudule
         /// <param name="x"></param>
         /// <param name="z"></param>
         /// <returns></returns>
-        public static Vector3 GetIndexWorldPoint(Terrain terrain, int x, int z)
+        public static Vector3 GetIndexWorldPoint(Terrain terrain, int x, int z, float y)
         {
             TerrainData data = terrain.terrainData;
             float _x = data.size.x / (data.heightmapWidth - 1) * x;
             float _z = data.size.z / (data.heightmapHeight - 1) * z;
-
-            float _y = GetPointHeight(terrain, new Vector3(_x, 0, _z));
-            return new Vector3(_x, _y, _z) + terrain.GetPosition();
+            return new Vector3(_x, terrain.terrainData.size.y * y, _z) + terrain.GetPosition();
         }
 
         /// <summary>
@@ -182,7 +180,7 @@ namespace XFramework.TerrainMoudule
         /// <returns></returns>
         public static bool GetPositionOnTerrain(Vector3 pos, out Vector3 posOnTerrain)
         {
-            if(Physics.Raycast(pos + Vector3.up * 10000, Vector3.down, out RaycastHit hitInfo, float.MaxValue, LayerMask.GetMask("Terrain")))
+            if (Physics.Raycast(pos + Vector3.up * 10000, Vector3.down, out RaycastHit hitInfo, float.MaxValue, LayerMask.GetMask("Terrain")))
             {
                 posOnTerrain = hitInfo.point;
                 return true;
@@ -447,6 +445,48 @@ namespace XFramework.TerrainMoudule
         #region Tools
 
         /// <summary>
+        /// 通过树的预制体创建树模板
+        /// </summary>
+        /// <param name="treeObjs">树预制体</param>
+        /// <returns>模板</returns>
+        public static TreePrototype[] CreatTreePrototype(GameObject[] treeObjs)
+        {
+            TreePrototype[] trees = new TreePrototype[treeObjs.Length];
+            for (int i = 0, length = treeObjs.Length; i < length; i++)
+            {
+                trees[i] = new TreePrototype();
+                trees[i].prefab = treeObjs[i];
+            }
+            return trees;
+        }
+
+        /// <summary>
+        /// 通过贴图创建细节模板
+        /// </summary>
+        /// <param name="textures">贴图</param>
+        /// <returns>模板</returns>
+        public static DetailPrototype[] CreateDetailPrototype(Texture2D[] textures)
+        {
+            DetailPrototype[] details = new DetailPrototype[textures.Length];
+
+            for (int i = 0, length = details.Length; i < length; i++)
+            {
+                details[i] = new DetailPrototype();
+                details[i].prototypeTexture = textures[i];
+                details[i].minWidth = 1f;
+                details[i].maxWidth = 2f;
+                details[i].maxHeight = 0.2f;
+                details[i].maxHeight = 0.8f;
+                details[i].noiseSpread = 1f;
+                details[i].healthyColor = Color.green;
+                details[i].dryColor = Color.green;
+                details[i].renderMode = DetailRenderMode.GrassBillboard;
+            }
+
+            return details;
+        }
+
+        /// <summary>
         /// 获取一个树的实例
         /// </summary>
         /// <param name="index"></param>
@@ -471,8 +511,9 @@ namespace XFramework.TerrainMoudule
         /// <param name="terrain"></param>
         /// <param name="pos"></param>
         /// <returns></returns>
-        public static float GetSeepness(Terrain terrain, Vector3 pos)
+        public static float GetSeepness(Vector3 pos)
         {
+            Terrain terrain = GetTerrain(pos);
             Vector3 differ = pos - terrain.GetPosition();
 
             if (terrain)
@@ -487,14 +528,96 @@ namespace XFramework.TerrainMoudule
         public static Terrain GetTerrain(Vector3 pos)
         {
             pos.y += 10000;
-            if(Physics.Raycast(pos,Vector3.down,out RaycastHit hitInfo))
+            RaycastHit hit = Utility.SendRayDown(pos, LayerMask.GetMask("Terrain"));
+            if (!hit.Equals(default(RaycastHit)))
             {
-                Terrain terrain = hitInfo.collider.GetComponent<Terrain>();
+                Terrain terrain = hit.collider.GetComponent<Terrain>();
                 return terrain;
             }
             return null;
         }
 
+        /// <summary>
+        /// 配置场景中的Terrain索引
+        /// </summary>
+        public static Terrain[,] GetActiveTerrains()
+        {
+            Terrain[] activeTerrains = Terrain.activeTerrains;
+            if (activeTerrains.Length == 0)
+            {
+                return new Terrain[0, 0];
+            }
+            Vector3 terrainSize = activeTerrains[0].terrainData.size;
+            float halfX = terrainSize.x / 2;
+            float halfZ = terrainSize.z / 2;
+            float x = 0, z = 0;
+            Vector3 excursionPos = activeTerrains[0].GetPosition();
+            for (int i = 0; i < activeTerrains.Length; i++)
+            {
+                if (x < activeTerrains[i].GetPosition().x)
+                    x = activeTerrains[i].GetPosition().x;
+                if (z < activeTerrains[i].GetPosition().z)
+                    z = activeTerrains[i].GetPosition().z;
+
+                if (excursionPos.x > activeTerrains[i].GetPosition().x)
+                    excursionPos.x = activeTerrains[i].GetPosition().x;
+                if (excursionPos.z > activeTerrains[i].GetPosition().z)
+                    excursionPos.z = activeTerrains[i].GetPosition().z;
+            }
+            Terrain[,] terrains = new Terrain[(int)((x - excursionPos.x + halfX) / terrainSize.x) + 1, (int)((z - excursionPos.z + halfZ) / terrainSize.z) + 1];
+
+            int u, v;
+
+            for (int i = 0; i < activeTerrains.Length; i++)
+            {
+                u = (int)((activeTerrains[i].GetPosition().x - excursionPos.x + halfX) / terrainSize.x);
+                v = (int)((activeTerrains[i].GetPosition().z - excursionPos.z + halfZ) / terrainSize.z);
+                terrains[u, v] = activeTerrains[i];
+            }
+
+            return terrains;
+        }
+
+        /// <summary>
+        /// 处理地形接缝
+        /// </summary>
+        public static void HandleConnect()
+        {
+            if (Terrain.activeTerrain == null)
+            {
+                return;
+            }
+            Terrain[,] terrains = GetActiveTerrains();
+            int res = terrains[0, 0].terrainData.heightmapResolution;
+
+            foreach (var terrain in terrains)
+            {
+                var right = terrain.Right();
+                if (right != null)
+                {
+                    float[,] h = right.terrainData.GetHeights(0, 0, 1, res);
+                    terrain.terrainData.SetHeights(res - 1, 0, h);
+                }
+
+                var bottom = terrain.Bottom();
+                if (bottom != null)
+                {
+                    float[,] h = bottom.terrainData.GetHeights(0, res - 1, res, 1);
+                    terrain.terrainData.SetHeights(0, 0, h);
+                }
+            }
+
+            float[,][,] heights = new float[terrains.GetLength(0), terrains.GetLength(1)][,];
+
+            for (int i = 0; i < terrains.GetLength(0); i++)
+            {
+                for (int j = 0; j < terrains.GetLength(1); j++)
+                {
+                    heights[i, j] = terrains[i, j].terrainData.GetHeights(0, 0, res, res);
+                }
+            }
+        }
+
         #endregion
     }
-} 
+}
