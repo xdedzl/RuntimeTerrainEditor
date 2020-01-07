@@ -207,10 +207,9 @@ public class TerrainModifierPanel : MonoBehaviour
         }
 
         // 注册Toogle事件
-        ToggleGroup group = scrollContent.GetComponent<ToggleGroup>();
-        foreach (var item in scrollContent.GetComponentsInChildren<Toggle>())
+        var toggles = scrollContent.GetComponentsInChildren<Toggle>();
+        foreach (var item in toggles)
         {
-            item.group = group;
             item.onValueChanged.AddListener((a) =>
             {
                 if (a == true)
@@ -220,6 +219,7 @@ public class TerrainModifierPanel : MonoBehaviour
                 }
             });
         }
+        toggles[0].isOn = true;
 
         // 为Image赋贴图
         for (int i = 0; i < scrollContent.childCount; i++)
@@ -254,7 +254,7 @@ public class TerrainModifierPanel : MonoBehaviour
                 projector = projectorObj.AddComponent<Projector>();
                 projector.orthographic = true;
                 projector.farClipPlane = 20000;
-                projector.material = Resources.Load<Material>("Projector/ProjectorMat.mat");
+                projector.material = Resources.Load<Material>("Projector/ProjectorMat");
             }
             return projector;
         }
@@ -280,6 +280,7 @@ public class TerrainModifierPanel : MonoBehaviour
             if (!hitInfo.Equals(default(RaycastHit)))
             {
                 Projection.transform.position = hitInfo.point + Vector3.up * 10000;
+                Projection.orthographicSize = slider1.Value;
             }
         }
 
@@ -372,7 +373,6 @@ public class TerrainModifierPanel : MonoBehaviour
             }
         }
     }
-
 
     /// <summary>
     /// texture转sprite
