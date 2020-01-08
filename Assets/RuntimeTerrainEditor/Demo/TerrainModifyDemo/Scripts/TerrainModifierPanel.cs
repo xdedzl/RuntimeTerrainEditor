@@ -339,7 +339,7 @@ public class TerrainModifierPanel : MonoBehaviour
                 if (isAdd)
                     Game.TerrainModule.AddDetial(hitInfo.point, slider1.Value, (int)slider2.Value, prototypeIndex, true);
                 else
-                    Game.TerrainModule.RemoveDetial(hitInfo.point, slider1.Value, (int)slider2.Value, true);
+                    Game.TerrainModule.RemoveDetial(hitInfo.point, slider1.Value, prototypeIndex, true);
                 break;
             case ModifierType.Texture:
                 Game.TerrainModule.SetTexture(hitInfo.point, slider1.Value, prototypeIndex, 0.05f * slider2.Value, true);
@@ -366,7 +366,7 @@ public class TerrainModifierPanel : MonoBehaviour
                     if (isAdd)
                         Game.TerrainModule.CreatTree(hitInfo.point, (int)slider2.Value, (int)slider1.Value, prototypeIndex);
                     else
-                        Game.TerrainModule.RemoveTree(hitInfo.point, (int)slider2.Value, prototypeIndex);
+                        Game.TerrainModule.RemoveTree(hitInfo.point, (int)slider1.Value, prototypeIndex);
                     break;
                 default:
                     break;
