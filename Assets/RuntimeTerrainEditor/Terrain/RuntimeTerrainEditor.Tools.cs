@@ -7,7 +7,7 @@ namespace XFramework.TerrainMoudule
     /// <summary>
     /// 地形管理器
     /// </summary>
-    public partial class TerrainManager
+    public partial class RuntimeTerrainEditor
     {
         #region  工具
 

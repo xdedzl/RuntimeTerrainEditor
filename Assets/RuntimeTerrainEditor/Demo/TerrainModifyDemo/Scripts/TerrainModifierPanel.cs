@@ -359,9 +359,6 @@ public class TerrainModifierPanel : MonoBehaviour
         {
             switch (ModifierType)
             {
-                case ModifierType.Terrain:
-                    Game.TerrainModule.Refresh();
-                    break;
                 case ModifierType.Tree:
                     if (isAdd)
                         Game.TerrainModule.CreatTree(hitInfo.point, (int)slider2.Value, (int)slider1.Value, prototypeIndex);

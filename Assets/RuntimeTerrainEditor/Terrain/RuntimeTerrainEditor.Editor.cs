@@ -7,7 +7,7 @@ namespace XFramework.TerrainMoudule
     /// <summary>
     /// 地形编辑管理
     /// </summary>
-    public partial class TerrainManager
+    public partial class RuntimeTerrainEditor
     {
         #region 高度图相关
         /*
@@ -42,6 +42,10 @@ namespace XFramework.TerrainMoudule
                     brushDic.Add(i, alphas);
                 }
             }
+            else
+            {
+                Debug.LogError("实例化时没有传入笔刷数据，请勿使用笔刷相关API");
+            }
         }
 
         /// <summary>
@@ -55,7 +59,7 @@ namespace XFramework.TerrainMoudule
         /// <param name="width">在X轴上的检索长度</param>
         /// <param name="height">在Y轴上的检索长度</param>
         /// <returns></returns>
-        public float[,] GetHeightMap(Terrain terrain, int xBase = 0, int yBase = 0, int width = 0, int height = 0)
+        private float[,] GetHeightMap(Terrain terrain, int xBase = 0, int yBase = 0, int width = 0, int height = 0)
         {
             // 如果后四个均为默认参数，则直接返回当前地形的整个高度图
             if (xBase + yBase + width + height == 0)
@@ -114,7 +118,7 @@ namespace XFramework.TerrainMoudule
         /// <param name="xBase">X起点</param>
         /// <param name="yBase">Y起点</param>
         /// <param name="immediate">是否立即刷新地图</param>
-        public void SetHeightMap(Terrain terrain, float[,] heights, int xBase = 0, int yBase = 0, bool immediate = true)
+        private void SetHeightMap(Terrain terrain, float[,] heights, int xBase = 0, int yBase = 0, bool immediate = true)
         {
             TerrainData terrainData = terrain.terrainData;
             int length_1 = heights.GetLength(1);
@@ -271,7 +275,7 @@ namespace XFramework.TerrainMoudule
         /// <param name="radius">半径</param>
         /// <param name="opacity">力度</param>
         /// <param name="isRise">抬高还是降低</param>
-        private void InternalChangeHeight(Vector3 center, float radius, float opacity, bool isRise, bool regesterUndo)
+        private void InternalChangeHeight(Vector3 center, float radius, float opacity, bool isRise, bool regesterUndo, bool immediate)
         {
             if (!TryGetHeightMapCmd(center, radius, out HeightCmdData arg)) return;
 
@@ -294,7 +298,7 @@ namespace XFramework.TerrainMoudule
                 }
             }
             // 重新设置高度图
-            SetHeightMap(arg.terrain, arg.heightMap, arg.startMapIndex.x, arg.startMapIndex.y, false);
+            SetHeightMap(arg.terrain, arg.heightMap, arg.startMapIndex.x, arg.startMapIndex.y, immediate);
         }
 
         /// <summary>
@@ -305,7 +309,7 @@ namespace XFramework.TerrainMoudule
         /// <param name="opacity">力度</param>
         /// <param name="brushIndex">笔刷索引</param>
         /// <param name="isRise">抬高还是降低</param>
-        private async void InternalChangeHeightWithBrush(Vector3 center, float radius, float opacity, int brushIndex, bool isRise, bool regesterUndo)
+        private async void InternalChangeHeightWithBrush(Vector3 center, float radius, float opacity, int brushIndex, bool isRise, bool regesterUndo, bool immediate)
         {
             if (!TryGetHeightMapCmd(center, radius, out HeightCmdData arg)) return;
 
@@ -327,7 +331,7 @@ namespace XFramework.TerrainMoudule
             }
 
             // 重新设置高度图
-            SetHeightMap(arg.terrain, arg.heightMap, arg.startMapIndex.x, arg.startMapIndex.y);
+            SetHeightMap(arg.terrain, arg.heightMap, arg.startMapIndex.x, arg.startMapIndex.y, immediate);
         }
 
         /// <summary>
@@ -337,7 +341,7 @@ namespace XFramework.TerrainMoudule
         /// <param name="radius">半径</param>
         /// <param name="dev">这是高斯模糊的一个参数，会影响平滑的程度</param>
         /// <param name="level">构建高斯核的半径</param>
-        private void InternalSmooth(Vector3 center, float radius, float dev, int level, bool regesterUndo)
+        private void InternalSmooth(Vector3 center, float radius, float dev, int level, bool regesterUndo, bool immediate)
         {
             center.x -= terrainSize.x / (heightMapRes - 1) * level;
             center.z -= terrainSize.z / (heightMapRes - 1) * level;
@@ -349,7 +353,7 @@ namespace XFramework.TerrainMoudule
 
             // 利用高斯模糊做平滑处理
             Math2d.GaussianBlur(arg.heightMap, dev, level, false);
-            SetHeightMap(arg.terrain, arg.heightMap, arg.startMapIndex.x, arg.startMapIndex.y, false);
+            SetHeightMap(arg.terrain, arg.heightMap, arg.startMapIndex.x, arg.startMapIndex.y, immediate);
         }
 
         /// <summary>
@@ -359,12 +363,12 @@ namespace XFramework.TerrainMoudule
         /// <param name="height">高度</param>
         private void InternalFlatten(Terrain terrain, float height)
         {
-            float scaledHeight = height * tdInfo.deltaHeight;
+            float scaledHeight = height * deltaHeight;
 
-            float[,] heights = new float[tdInfo.heightMapRes, tdInfo.heightMapRes];
-            for (int i = 0; i < tdInfo.heightMapRes; i++)
+            float[,] heights = new float[heightMapRes, heightMapRes];
+            for (int i = 0; i < heightMapRes; i++)
             {
-                for (int j = 0; j < tdInfo.heightMapRes; j++)
+                for (int j = 0; j < heightMapRes; j++)
                 {
                     heights[i, j] = scaledHeight;
                 }
@@ -648,9 +652,23 @@ namespace XFramework.TerrainMoudule
         /// <param name="radius">半径</param>
         /// <param name="opacity">力度</param>
         /// <param name="isRise">抬高还是降低</param>
+        /// <param name="regesterUndo">是否注册撤回命令</param>
         public void ChangeHeight(Vector3 center, float radius, float opacity, bool isRise = true, bool regesterUndo = false)
         {
-            InternalChangeHeight(center, radius, opacity, isRise, regesterUndo);
+            InternalChangeHeight(center, radius, opacity, isRise, regesterUndo, true);
+        }
+
+        /// <summary>
+        /// 改变高度（圆形）
+        /// </summary>
+        /// <param name="center">中心点</param>
+        /// <param name="radius">半径</param>
+        /// <param name="opacity">力度</param>
+        /// <param name="isRise">抬高还是降低</param>
+        /// <param name="regesterUndo">是否注册撤回命令</param>
+        public void ChangeHeightDelayLOD(Vector3 center, float radius, float opacity, bool isRise = true, bool regesterUndo = false)
+        {
+            InternalChangeHeight(center, radius, opacity, isRise, regesterUndo, false);
         }
 
         /// <summary>
@@ -661,9 +679,24 @@ namespace XFramework.TerrainMoudule
         /// <param name="opacity">力度</param>
         /// <param name="brushIndex">笔刷索引</param>
         /// <param name="isRise">抬高还是降低</param>
+        /// <param name="regesterUndo">是否注册撤回命令</param>
         public void ChangeHeightWithBrush(Vector3 center, float radius, float opacity, int brushIndex = 0, bool isRise = true, bool regesterUndo = false)
         {
-            InternalChangeHeightWithBrush(center, radius, opacity, brushIndex, isRise, regesterUndo);
+            InternalChangeHeightWithBrush(center, radius, opacity, brushIndex, isRise, regesterUndo, true);
+        }
+
+        /// <summary>
+        /// 利用自定义笔刷更改地形高度
+        /// </summary>
+        /// <param name="center">中心点</param>
+        /// <param name="radius">半径</param>
+        /// <param name="opacity">力度</param>
+        /// <param name="brushIndex">笔刷索引</param>
+        /// <param name="isRise">抬高还是降低</param>
+        /// <param name="regesterUndo">是否注册撤回命令</param>
+        public void ChangeHeightWithBrushDelayLod(Vector3 center, float radius, float opacity, int brushIndex = 0, bool isRise = true, bool regesterUndo = false)
+        {
+            InternalChangeHeightWithBrush(center, radius, opacity, brushIndex, isRise, regesterUndo, false);
         }
 
         /// <summary>
@@ -673,9 +706,23 @@ namespace XFramework.TerrainMoudule
         /// <param name="radius">半径</param>
         /// <param name="dev">这是高斯模糊的一个参数，会影响平滑的程度</param>
         /// <param name="level">构建高斯和的半径</param>
+        /// <param name="regesterUndo">是否注册撤回命令</param>
         public void Smooth(Vector3 center, float radius, float dev, int level = 3, bool regesterUndo = false)
         {
-            InternalSmooth(center, radius, dev, level, regesterUndo);
+            InternalSmooth(center, radius, dev, level, regesterUndo, true);
+        }
+
+        /// <summary>
+        /// 平滑地形
+        /// </summary>
+        /// <param name="center">中心点</param>
+        /// <param name="radius">半径</param>
+        /// <param name="dev">这是高斯模糊的一个参数，会影响平滑的程度</param>
+        /// <param name="level">构建高斯和的半径</param>
+        /// <param name="regesterUndo">是否注册撤回命令</param>
+        public void SmoothDelayLod(Vector3 center, float radius, float dev, int level = 3, bool regesterUndo = false)
+        {
+            InternalSmooth(center, radius, dev, level, regesterUndo, false);
         }
 
         /// <summary>
@@ -691,7 +738,7 @@ namespace XFramework.TerrainMoudule
         /// <summary>
         /// 刷新地图的LOD
         /// </summary>
-        public void Refresh()
+        public void ApplyDelayedHeightmapModification()
         {
             foreach (var item in terrainList)
             {
@@ -734,6 +781,7 @@ namespace XFramework.TerrainMoudule
         /// <param name="center">目标中心点</param>
         /// <param name="radius">半径</param>
         /// <param name="layer">层级</param>
+        /// <param name="regesterUndo">是否注册撤回命令</param>
         public void AddDetial(Vector3 center, float radius, int count, int layer = 0, bool regesterUndo = false)
         {
             InternalSetDetail(center, radius, layer, count, regesterUndo);
@@ -746,6 +794,7 @@ namespace XFramework.TerrainMoudule
         /// <param name="center">目标中心点</param>
         /// <param name="radius">半径</param>
         /// <param name="layer">层级</param>
+        /// <param name="regesterUndo">是否注册撤回命令</param>
         public void RemoveDetial(Vector3 point, float radius, int layer = 0, bool regesterUndo = false)
         {
             InternalSetDetail(point, radius, layer, 0, regesterUndo);
@@ -757,7 +806,9 @@ namespace XFramework.TerrainMoudule
         /// </summary>
         /// <param name="radius">半径</param>
         /// <param name="point">中心点</param>
-        /// <param name="index">layer</param>
+        /// <param name="index">层级</param>
+        /// <param name="strength">力度</param>
+        /// <param name="regesterUndo">是否注册撤回命令</param>
         public void SetTexture(Vector3 point, float radius, int index, float strength = 0.05f, bool regesterUndo = false)
         {
             InternalSetTexture(point, radius, index, strength, true, regesterUndo);
@@ -768,7 +819,8 @@ namespace XFramework.TerrainMoudule
         /// </summary>
         /// <param name="radius">半径</param>
         /// <param name="point">中心点</param>
-        /// <param name="index">layer</param>
+        /// <param name="index">层级</param>
+        /// <param name="regesterUndo">是否注册撤回命令</param>
         public void SetTextureNoMix(Vector3 point, float radius, int index, bool regesterUndo = false)
         {
             InternalSetTexture(point, radius, index, -1, false, regesterUndo);
@@ -778,7 +830,7 @@ namespace XFramework.TerrainMoudule
         /// 利用笔刷设置贴图
         /// </summary>
         /// <param name="point">中心点</param>
-        /// <param name="index">layer</param>
+        /// <param name="index">层级</param>
         /// <param name="radius">半径</param>
         /// <param name="brushIndex">笔刷序号</param>
         public void SetTextureWithBrush(Vector3 point, int index, float radius, int brushIndex)

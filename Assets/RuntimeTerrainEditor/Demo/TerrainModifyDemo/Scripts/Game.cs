@@ -4,13 +4,13 @@ using XFramework.TerrainMoudule;
 
 public class Game : MonoBehaviour
 {
-    public static TerrainManager TerrainModule;
+    public static RuntimeTerrainEditor TerrainModule;
 
     private void Awake()
     {
         var brushs = Resources.LoadAll<Texture2D>("Terrain/Brushs");
 
-        TerrainModule = new TerrainManager(brushs);
+        TerrainModule = new RuntimeTerrainEditor(brushs);
 
         var trees = Resources.LoadAll<GameObject>("Terrain/Trees");
         InitTreePrototype(trees);
