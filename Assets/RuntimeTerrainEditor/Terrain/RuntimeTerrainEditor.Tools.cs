@@ -20,7 +20,7 @@ namespace XFramework.TerrainMoudule
         /// <summary>
         /// 配置场景中的Terrain索引
         /// </summary>
-        public void ConfigActiveTerrains()
+        private void ConfigActiveTerrains()
         {
             Terrain[] activeTerrains = Terrain.activeTerrains;
             if (activeTerrains.Length == 0)

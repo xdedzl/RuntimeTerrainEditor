@@ -65,9 +65,18 @@ namespace XFramework.TerrainMoudule
         }
 
         /// <summary>
+        /// 使用前的配置
+        /// </summary>
+        public void Config()
+        {
+            ConfigTerrainData();
+            ConfigActiveTerrains();
+        }
+
+        /// <summary>
         /// 配置地形的基础参数
         /// </summary>
-        public void ConfigTerrainData()
+        private void ConfigTerrainData()
         {
             if (Terrain.activeTerrain != null)
             {
